@@ -54,7 +54,6 @@
       "label": "build_All",
       "dependsOrder": "sequence",
       "dependsOn": [
-        "copy-files",
         "build_CommandLineHelper",
         "build_CommandLineHelperUnitTest",
         "build_CommandLineHelperIntegrationTest",
@@ -110,6 +109,9 @@
         "${workspaceFolder}/CommandLineHelperIntegrationTest/CommandLineHelperIntegrationTest.csproj",
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
+      ],
+      "dependsOn": [
+        "copy-files"
       ],
       "problemMatcher": "$msCompile",
       "group": "build",

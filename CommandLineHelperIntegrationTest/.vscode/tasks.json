@@ -1,77 +1,79 @@
 {
-    "version": "2.0.0",
-    "tasks": [
-        {
-            "label": "build",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "build",
-                "${workspaceFolder}/CommandLineHelperIntegrationTest.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile",
-            "dependsOn" : ["copy-files"],
-            "presentation": 
-            {
-              "echo": true,
-              "reveal": "always",
-              "focus": false,
-              "panel": "shared",
-              "showReuseMessage": true,
-              "clear": true
-            }
-        },
-        {
-            "label": "publish",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "publish",
-                "${workspaceFolder}/CommandLineHelperIntegrationTest.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-            "label": "watch",
-            "command": "dotnet",
-            "type": "process",
-            "args": [
-                "watch",
-                "run",
-                "${workspaceFolder}/CommandLineHelperIntegrationTest.csproj",
-                "/property:GenerateFullPaths=true",
-                "/consoleloggerparameters:NoSummary"
-            ],
-            "problemMatcher": "$msCompile"
-        },
-        {
-          "label": "copy-files",
-          "windows":
-          {
-            "command": "copy",
-            "type": "shell",
-            "args": ["*.txt", "\"bin/Debug/netcoreapp3.1/\"", "/V", "/Y"]
-          },
-          "linux":
-          {
-            "command": "cp",
-            "type": "shell",
-            "args" : ["*.txt", "\"bin/Debug/netcoreapp3.1/\""]
-          },
-          "presentation": 
-          {
-            "echo": true,
-            "reveal": "always",
-            "focus": false,
-            "panel": "dedicated",
-            "showReuseMessage": true,
-            "clear": false
-          }
-
-        }
-    ]
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "build",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "build",
+        "${workspaceFolder}/CommandLineHelperIntegrationTest.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "dependsOn": [
+        "copy-files"
+      ],
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": true
+      }
+    },
+    {
+      "label": "publish",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "publish",
+        "${workspaceFolder}/CommandLineHelperIntegrationTest.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "watch",
+      "command": "dotnet",
+      "type": "process",
+      "args": [
+        "watch",
+        "run",
+        "${workspaceFolder}/CommandLineHelperIntegrationTest.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "copy-files",
+      "windows": {
+        "type": "shell",
+        "command": "copy",
+        "args": [
+          "\"${workspaceFolder}\\CommandLineHelperIntegrationTest\\*.txt\"",
+          "\"${workspaceFolder}\\CommandLineHelperIntegrationTest\\bin\\Debug\\netcoreapp3.1\\\"",
+          "/V",
+          "/Y"
+        ],
+      },
+      "linux": {
+        "type": "shell",
+        "command": "cp",
+        "args": [
+          "${workspaceFolder}/CommandLineHelperIntegrationTest/*.txt",
+          "${workspaceFolder}/CommandLineHelperIntegrationTest/bin/Debug/netcoreapp3.1/"
+        ]
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      }
+    }
+  ]
 }
