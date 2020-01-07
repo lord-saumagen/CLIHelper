@@ -1,0 +1,180 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "test_All",
+      "group": "test",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "test_UnitTest",
+        "test_IntegrationTest"
+      ],
+      "presentation": {
+        "clear": true,
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "test_UnitTest",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "${workspaceFolder}/CommandLineHelperUnitTest/CommandLineHelperUnitTest.csproj",
+        "-v",
+        "normal"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "test_IntegrationTest",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "test",
+        "${workspaceFolder}/CommandLineHelperIntegrationTest/CommandLineHelperIntegrationTest.csproj",
+        "-v",
+        "normal"
+      ],
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build_All",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "copy-files",
+        "build_CommandLineHelper",
+        "build_CommandLineHelperUnitTest",
+        "build_CommandLineHelperIntegrationTest",
+        "build_TestCommand",
+        "echo-complete"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "build_CommandLineHelper",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/CommandLineHelper/CommandLineHelper.csproj",
+        // Ask dotnet build to generate full paths for file names.
+        "/property:GenerateFullPaths=true",
+        // Do not generate summary otherwise it leads to duplicate errors in Problems panel
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build_CommandLineHelperUnitTest",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/CommandLineHelperUnitTest/CommandLineHelperUnitTest.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "build_CommandLineHelperIntegrationTest",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/CommandLineHelperIntegrationTest/CommandLineHelperIntegrationTest.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "problemMatcher": "$msCompile",
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "build_TestCommand",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/TestCommand/TestCommand.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "group": "build",
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "copy-files",
+      "windows": {
+        "type": "shell",
+        "command": "copy",
+        "args": [
+          "\"${workspaceFolder}\\CommandLineHelperIntegrationTest\\*.txt\"",
+          "\"${workspaceFolder}\\CommandLineHelperIntegrationTest\\bin\\Debug\\netcoreapp3.1\\\"",
+          "/V",
+          "/Y"
+        ],
+      },
+      "linux": {
+        "type": "shell",
+        "command": "cp",
+        "args": [
+          "${workspaceFolder}/CommandLineHelperIntegrationTest/*.txt",
+          "${workspaceFolder}/CommandLineHelperIntegrationTest/bin/Debug/netcoreapp3.1/"
+        ]
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      }
+    },
+    {
+      "label": "echo-complete",
+      "type": "shell",
+      "command": "echo",
+      "args": ["+++ BUILD COMPLETE +++"],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "echo": false,
+        "showReuseMessage": false
+      },
+      "problemMatcher": "$msCompile"
+    },
+  ]
+}
