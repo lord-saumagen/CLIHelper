@@ -1,0 +1,40 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Nullable>enable</Nullable>
+    <AssemblyVersion>1.0.0</AssemblyVersion>
+    <Version>1.0.0</Version>
+    <Authors>Lord Saumagen (Lord.Saumagen@outlook.com)</Authors>
+    <Company>Private</Company>
+    <NeutralLanguage>en</NeutralLanguage>
+    <Description>
+      The purpose of this library is to simplify and unify the 
+      mundane task of command line parsing and validating.
+    </Description>
+    <RepositoryUrl>Repo URL</RepositoryUrl>
+    <PackageLicenseUrl>https://opensource.org/licenses/MS-PL</PackageLicenseUrl>
+  </PropertyGroup>
+
+  <!-- 
+<TargetFramework>net461</TargetFramework>
+<Nullable>enable</Nullable>
+<Version>1.2.3.4</Version>
+<Authors>Author 1</Authors>
+<Company>Company XYZ</Company>
+<Product>Product 2</Product>
+<PackageId>MyApp</PackageId>
+<AssemblyVersion>2.0.0.0</AssemblyVersion>
+<FileVersion>3.0.0.0</FileVersion>
+<NeutralLanguage>en</NeutralLanguage>
+<Description>Description here</Description>
+<Copyright>Copyright</Copyright>
+<PackageLicenseUrl>License URL</PackageLicenseUrl>
+<PackageProjectUrl>Project URL</PackageProjectUrl>
+<PackageIconUrl>Icon URL</PackageIconUrl>
+<RepositoryUrl>Repo URL</RepositoryUrl>
+<RepositoryType>Repo type</RepositoryType>
+<PackageTags>Tags</PackageTags>
+<PackageReleaseNotes>Release</PackageReleaseNotes>
+  -->
+</Project>
