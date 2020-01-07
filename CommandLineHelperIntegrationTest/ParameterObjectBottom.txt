@@ -1,0 +1,6 @@
+    public ParameterObject(string commandName, Assembly commandAssembly): base(commandName, commandAssembly, new DisplayHelper())
+    {
+      
+    }
+  }// END class
+}// END namespace

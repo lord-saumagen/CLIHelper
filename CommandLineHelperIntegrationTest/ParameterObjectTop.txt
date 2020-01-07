@@ -1,0 +1,9 @@
+using System;
+using System.Reflection;
+using CommandLineHelper;
+
+namespace TestCommand
+{
+  //UsageAttribute
+  public class ParameterObject : ParameterBase
+  {
