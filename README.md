@@ -79,8 +79,17 @@ So I decided to crate my own solution and follow my own rules which are:
 
 ## Installation
 
-Reference the ```CommandLineHelper.dll``` in your own command line program project.  
-Add a usage reference to your code file.
+Add the nuget package to your project using the following command:
+
+```bash
+paket add CommandLineHelper --version 1.0.0
+```
+
+Add a *'using'* statement to your code file:
+
+```cs
+using CommandLineHelper;
+```
 
 ## Project Setup
 
@@ -110,8 +119,8 @@ dotnet add reference <Path to the 'CommandLineHelper' project>
 
 The repository at https://github.com/lord-saumagen/CLIHelper.git is a multi project solution. Since github doesn't support multi project solutions, the sub-projects are simply directories below the *'CLIHelp'* directory.  
 The *'CLIHelper'* directory hosts the solution file for this multi project solution. (Blue)  
-The *'CommandLineHelper'* is the director which hosts the library implementation. (Black)  
-The *'CommandLineHelperUnitTest'* hosts the unit tests. (Orange)  
+The *'CommandLineHelper'* directory is the director which hosts the library implementation. (Black)  
+The *'CommandLineHelperUnitTest'* directory hosts the unit tests. (Orange)  
 The other directories are all part of the integration test. (Green)  
 
 The directory structure looks like this:

@@ -20,6 +20,7 @@
     <PackageProjectUrl>https://github.com/lord-saumagen/CLIHelper</PackageProjectUrl>
     <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     <PackageLicenseUrl>https://opensource.org/licenses/MS-PL</PackageLicenseUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/lord-saumagen/CLIHelper/master/CommandLineHelper/docs/images/Avatar_128x128.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/lord-saumagen/CLIHelper</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
