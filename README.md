@@ -116,14 +116,14 @@ The other directories are all part of the integration test. (Green)
 
 The directory structure looks like this:
 
-![CLIHelper directory](./docs/images/SolutionStructure.png)
+![CLIHelper directory](./CommandLineHelper/docs/images/SolutionStructure.png)
 
 
 ## Usage
 
 ### The Basics
 
-The most important part of the solution is the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class. Create a subclass which inherits from ParameterBase and add public read / write properties to that class. Those public properties will become the command line arguments of your command line application. I will call them **parameter properties** from now on. I call the classes which derive from [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) **parameter classes** accordingly.
+The most important part of the solution is the [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) class. Create a subclass which inherits from ParameterBase and add public read / write properties to that class. Those public properties will become the command line arguments of your command line application. I will call them **parameter properties** from now on. I call the classes which derive from [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) **parameter classes** accordingly.
 
 In a second step you have to change the 'Main' function of your command line program. Lets say you created a 'ParameterObject' class which derived from 'ParameterBase'. In order to benefit from that class create a new instance of that class in your 'Main' function. The constructor requires your program name as it is used on the command line. That name might differ from the program name you use during development. But in most cases it's the same. As a second parameter a reference to an assembly is required. That should be the assembly which hosts your program. The assembly reference is used to determine the program version. I will come to that later.
 
@@ -139,7 +139,7 @@ The 'Main' function should look like this now:
       IsValid = parameterObject.Process(args, showUsageOnEmptyArgs : false);
 ```
 
-The [Process](./docs/html/CommandLineHelper.ParameterBase.Process.html) function parses the arguments from the provided argument array and assigns them to the corresponding parameter properties. After that the parameter properties get validated. The result of the validation will be true if all parameter properties passed the validation or otherwise false. The result will also be false if the parser detected a help or version request. You will read about that later. The parsing and validation process works for booleans, most number formats and strings. If you need more complex capabilities you have to implement your own parsing and validation logic. You can read about it in the [Advanced parsing and validating](#advanced-parsing-and-validating) section.
+The [Process](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Process.html) function parses the arguments from the provided argument array and assigns them to the corresponding parameter properties. After that the parameter properties get validated. The result of the validation will be true if all parameter properties passed the validation or otherwise false. The result will also be false if the parser detected a help or version request. You will read about that later. The parsing and validation process works for booleans, most number formats and strings. If you need more complex capabilities you have to implement your own parsing and validation logic. You can read about it in the [Advanced parsing and validating](#advanced-parsing-and-validating) section.
 
 Here is an example of the most basic usage of the command line helper library:
 
@@ -218,12 +218,12 @@ namespace TestCommand
 
 The example 'ParameterObject' has three public read / write properties. Those will become the arguments of the 'TestCommand' program. Running that program as it is will give you the following result:
 
-![BasicNoArgumentsProvided](./docs/images/BasicNoArgumentsProvided.png "Normal execution")
+![BasicNoArgumentsProvided](./CommandLineHelper/docs/images/BasicNoArgumentsProvided.png "Normal execution")
 
 OK, that might not be what you expected. Stay with me and soon you will be enlightened. But first lets see what happens if you set the 'showUsageOnEmptyArgs' in the 'Process' function to true.  
 The result when calling the command line program without any arguments will look like this:
 
-![BasicNoArgumentsProvidedUsageOnEmpty](./docs/images/BasicNoArgumentsProvidedUsageOnEmpty.png "Usage screen")
+![BasicNoArgumentsProvidedUsageOnEmpty](./CommandLineHelper/docs/images/BasicNoArgumentsProvidedUsageOnEmpty.png "Usage screen")
 
 First you will notice that there is a generic usage screen created by the program. (That's what the 'showUsageOnEmptyArgs' flag is used for)  
 
@@ -249,15 +249,15 @@ If you intend to create a command line program which does have parameter defined
 
 Let's have a quick look at the 'help' and the 'version' screen. Run the program and add the 'help' argument to render the help screen. The screen looks like:
 
-![BasicHelp](./docs/images/BasicHelp.png "Help screen")
+![BasicHelp](./CommandLineHelper/docs/images/BasicHelp.png "Help screen")
 
-The help screen shows a generic help in the upper part and the usage screen in the lower part. The generic help lists all arguments, their type and if available their default value. If the parameter property has a [DescriptionAttribute](./docs/html/CommandLineHelper.DescriptionAttribute.html) attached, that description will be displayed in the 'Description' column. Otherwise it's simply the name and the type.
+The help screen shows a generic help in the upper part and the usage screen in the lower part. The generic help lists all arguments, their type and if available their default value. If the parameter property has a [DescriptionAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DescriptionAttribute.html) attached, that description will be displayed in the 'Description' column. Otherwise it's simply the name and the type.
 
 Run the program and add the 'version' argument to render the version screen. The screen looks like:
 
-![BasicVersion](./docs/images/BasicVersion.png "Version screen")
+![BasicVersion](./CommandLineHelper/docs/images/BasicVersion.png "Version screen")
 
-The version screen simply returns the version of the command line program. The version is taken from the assembly which hosts the command line program. That's why the constructor of the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class requires a reference to the program assembly.
+The version screen simply returns the version of the command line program. The version is taken from the assembly which hosts the command line program. That's why the constructor of the [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) class requires a reference to the program assembly.
 
 You set the version of your program in the '*.csproj' file using the '&lt;Version&gt;' tag.
 
@@ -384,7 +384,7 @@ ExpressDelivery=Why numberofitems=many RECIPIENTNAME=42
 
 The result screen should look like this:
 
-![BasicValidationSummary](./docs/images/BasicValidationSummary.png "Validation summary")
+![BasicValidationSummary](./CommandLineHelper/docs/images/BasicValidationSummary.png "Validation summary")
 
 The red part is the validation summary which will be shown if the validation failed. That is the last of the screens which you get out of the box. Later I will show you how to create your own screen. But for the moment lets concentrate on the result. 
 As you can see, all arguments were recognized despite the fact that one was written in all upper characters, one in all lower characters and one in pascal case. As I mentioned earlier, the parser isn't case sensitive.
@@ -398,7 +398,7 @@ But the 'RecipientName' argument is considered valid even with a value of '42' w
 
 As you can see in the 'PARAMETER PROPERTIES' section of the screen above, the 'ExpressDelivery' parameter property hast still the default value 'False'. The 'NumberOfItems' parameter property has still the default value '0', but the 'RecipientName' parameter property has a value of '42'.
 
-The [PropertyMetaInfo](./docs/html/CommandLineHelper.PropertyMetaInfo.html) collection on the 'ParameterObject' class gives you a deeper insight on what happened during parse or validation. You can see that the parse failed for the 'ExpressDelivery' and the 'NumberOfItems' and succeeded for the 'RecipientName'.
+The [PropertyMetaInfo](./CommandLineHelper/docs/html/CommandLineHelper.PropertyMetaInfo.html) collection on the 'ParameterObject' class gives you a deeper insight on what happened during parse or validation. You can see that the parse failed for the 'ExpressDelivery' and the 'NumberOfItems' and succeeded for the 'RecipientName'.
 
 The last part, the 'PARSED ARGUMENTS' part shows a dictionary which holds the arguments which qualify as arguments for the 'CommandLineHelper' library.
 
@@ -406,7 +406,7 @@ That are all arguments which follow the 'ArgumentName'='ArgumentValue' rule. The
 
 The 'PropertyMetaInfo' collection and the arguments dictionary will become of interest as soon as you start to create your own parsing or validation rules.
 
-All the screens which might be generated during the 'Process' function are part of the [DisplayHelper](./docs/html/CommandLineHelper.DisplayHelper.html) class which itself is a reference implementation of the [IDisplayHelper](./docs/html/CommandLineHelper.IDisplayHelper.html) interface. The class was assigned to the 'ParameterObject' in the call to the base constructor.
+All the screens which might be generated during the 'Process' function are part of the [DisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.DisplayHelper.html) class which itself is a reference implementation of the [IDisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.IDisplayHelper.html) interface. The class was assigned to the 'ParameterObject' in the call to the base constructor.
 
 ``` cs
 base(commandName, commandAssembly, new DisplayHelper())
@@ -414,11 +414,11 @@ base(commandName, commandAssembly, new DisplayHelper())
 
 So far for the basic part of the 'CommandLineHelper' library.
 
-You might argue that this was a lot for creating a command line program which only has three arguments to parse and to validate. But be honest, it was a lot to read but not a lot to program. The programming part was just the creation of a parameter property class which derives from [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html). Creating an instance of that class and calling the [Process](./docs/html/CommandLineHelper.ParameterBase.Process.html) function.
+You might argue that this was a lot for creating a command line program which only has three arguments to parse and to validate. But be honest, it was a lot to read but not a lot to program. The programming part was just the creation of a parameter property class which derives from [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html). Creating an instance of that class and calling the [Process](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Process.html) function.
 
 The help screen, usage screen, version info, and the validation summary comes out of the box. Implementing the parse and validation logic from scratch would be much more code to write.  
 
-On the other hand the validation so far was far from perfect. The 'NumberOfItems' argument will still accept negative values. The 'RecipientName' will accept any nonsense and you might as well like to have mandatory arguments. 
+On the other hand the validation so far was far from perfect. The 'NumberOfItems' argument will still accept negative values. The 'RecipientName' will accept any nonsense and you might as well like to have mandatory arguments.
 
 Even the help screen and the usage screen might need some improvement.
 
@@ -431,8 +431,8 @@ Two of them are class attributes. 10 of them are property attributes.
 
 #### Class attributes
 
-1. [HelpAttribute](.doc/html/CommandLineHelper.HelpAttribute.html)
-2. [UsageAttribute](./doc/html/CommandLineHelper.UsageAttribute.html)
+1. [HelpAttribute](./CommandLineHelper/doc/html/CommandLineHelper.HelpAttribute.html)
+2. [UsageAttribute](./CommandLineHelper/doc/html/CommandLineHelper.UsageAttribute.html)
 
 The intended use is to attach them to a parameter class.  
 
@@ -457,13 +457,13 @@ namespace TestCommand
     .
 ```
 
-The text provided in the [HelpAttribute](.doc/html/CommandLineHelper.HelpAttribute.html) constructor will become part of the help screen if you use the [DisplayHelper](./docs/html/CommandLineHelper.DisplayHelper.html) class in your 'ParameterClass'. The text will be shown on top of the generic help screen.
+The text provided in the [HelpAttribute](./CommandLineHelper/doc/html/CommandLineHelper.HelpAttribute.html) constructor will become part of the help screen if you use the [DisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.DisplayHelper.html) class in your 'ParameterClass'. The text will be shown on top of the generic help screen.
 
-![HelpAttribute](./doc/../docs/images/HelpAttribute.png)
+![HelpAttribute](./CommandLineHelper/docs/images/HelpAttribute.png)
 
 ---
 
-The [UsageAttribute](./doc/html/CommandLineHelper.UsageAttribute.html) should be used the same way. The text assigned to the [UsageAttribute](./doc/html/CommandLineHelper.UsageAttribute.html) will replace the usage string of the generic usage screen.
+The [UsageAttribute](./CommandLineHelper/docs/html/CommandLineHelper.UsageAttribute.html) should be used the same way. The text assigned to the [UsageAttribute](./CommandLineHelper/docs/html/CommandLineHelper.UsageAttribute.html) will replace the usage string of the generic usage screen.
 
 Here is an example:
 
@@ -485,28 +485,28 @@ namespace TestCommand
 
 The result looks like this:
 
-![UsageAttribute](./doc/../docs/images/UsageAttribute.png)
+![UsageAttribute](./CommandLineHelper/docs/images/UsageAttribute.png)
 
-As long as you use the [DisplayHelper](./docs/html/CommandLineHelper.DisplayHelper.html) class in your parameter object, the text will be shown below the character explanation in the usage screen. That means you better stick with the conventions for marking optional arguments, value types and so on in your usage text. (In the example above I didn't. I made all arguments mandatory in the usage string. Just to show that it is your responsibility to create a valid and meaningful usage text and how you can mess it up.)
+As long as you use the [DisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.DisplayHelper.html) class in your parameter object, the text will be shown below the character explanation in the usage screen. That means you better stick with the conventions for marking optional arguments, value types and so on in your usage text. (In the example above I didn't. I made all arguments mandatory in the usage string. Just to show that it is your responsibility to create a valid and meaningful usage text and how you can mess it up.)
 
 Of course you can assign both attributes at the same time to your parameter class.
 
 #### Property Attributes
 
-1. [DefaultValueAttribute](./docs/html/CommandLineHelper.DefaultValueAttribute.html)
-2. [DescriptionAttribute](./docs/html/CommandLineHelper.DescriptionAttribute.html)
-3. [InternalAttribute](./docs/html/CommandLineHelper.InternalAttribute.html)
-4. [MandatoryAttribute](./docs/html/CommandLineHelper.MandatoryAttribute.html)
-5. [MaxStringLengthAttribute](./docs/html/CommandLineHelper.MaxStringLengthAttribute.html)
-6. [MaxValueAttribute](./docs/html/CommandLineHelper.MaxValueAttribute.html)
-7. [MinStringLengthAttribute](./docs/html/CommandLineHelper.MinStringLengthAttribute.html)
-8. [MinValueAttribute](./docs/html/CommandLineHelper.MinValueAttribute.html)
-9. [NameAttribute](./docs/html/CommandLineHelper.NameAttribute.html)
-10. [ValueSetAttribute](./docs/html/CommandLineHelper.ValueSetAttribute.html)
+1. [DefaultValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DefaultValueAttribute.html)
+2. [DescriptionAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DescriptionAttribute.html)
+3. [InternalAttribute](./CommandLineHelper/docs/html/CommandLineHelper.InternalAttribute.html)
+4. [MandatoryAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MandatoryAttribute.html)
+5. [MaxStringLengthAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MaxStringLengthAttribute.html)
+6. [MaxValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MaxValueAttribute.html)
+7. [MinStringLengthAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MinStringLengthAttribute.html)
+8. [MinValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MinValueAttribute.html)
+9. [NameAttribute](./CommandLineHelper/docs/html/CommandLineHelper.NameAttribute.html)
+10. [ValueSetAttribute](./CommandLineHelper/docs/html/CommandLineHelper.ValueSetAttribute.html)
 
-The [DefaultValueAttribute](./docs/html/CommandLineHelper.DefaultValueAttribute.html) gives the property the attribute is attached to a default value. As you might know, value types already have a default value. For number types the default value is 0, for booleans the default value is false. Strings and  reference types don't have a default value. Their value is null as long as they are uninitialized.
+The [DefaultValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DefaultValueAttribute.html) gives the property the attribute is attached to a default value. As you might know, value types already have a default value. For number types the default value is 0, for booleans the default value is false. Strings and  reference types don't have a default value. Their value is null as long as they are uninitialized.
 
-Often enough those default values doesn't match your needs. Let's stick with the example program where the 'NumberOfItems' property has a default value of 0. Since the most popular use case in this order command line application is the order of one item, it would be nice to set this value as default. You can do this by attaching the [DefaultValueAttribute](./docs/html/CommandLineHelper.DefaultValueAttribute.html) to the 'NumberOfItems' property.
+Often enough those default values doesn't match your needs. Let's stick with the example program where the 'NumberOfItems' property has a default value of 0. Since the most popular use case in this order command line application is the order of one item, it would be nice to set this value as default. You can do this by attaching the [DefaultValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DefaultValueAttribute.html) to the 'NumberOfItems' property.
 
 ``` cs
 [Default(1)]
@@ -517,11 +517,11 @@ As with all parameter properties which have a default value, those properties ar
 
 The help screen will look like this:
 
-![DefaultValueAttribute](./docs/images/DefaultValueAttribute.png "Parameter property with default value attribute (NuberOfItems)")
+![DefaultValueAttribute](./CommandLineHelper/docs/images/DefaultValueAttribute.png "Parameter property with default value attribute (NuberOfItems)")
 
 ---
 
-The [DescriptionAttribute](./docs/html/CommandLineHelper.DescriptionAttribute.html) can be used to add a meaningful description to a parameter property. That description will be shown in the help screen in the description column.
+The [DescriptionAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DescriptionAttribute.html) can be used to add a meaningful description to a parameter property. That description will be shown in the help screen in the description column.
 
 Here is an example:
 
@@ -534,12 +534,12 @@ public int NumberOfItems { get; set; }
 
 The help screen will look like this:
 
-![DescriptionAttribute](./docs/images/DescriptionAttribute.png "Parameter property with description attribute (NumberOfItems)")
+![DescriptionAttribute](./CommandLineHelper/docs/images/DescriptionAttribute.png "Parameter property with description attribute (NumberOfItems)")
 
 ---
 
-The [InternalAttribute](./docs/html/CommandLineHelper.InternalAttribute.html) excludes a property of a parameter class, which otherwise qualifies as parameter property, from the parameter property handling. That means the property will not become a command line argument and will therefore not take part in the parse and validation process.
-That attribute is only of interest if you intent to implement some logic in the parameter class which requires a public read / write property. If that property shall not become a parameter property attach the [InternalAttribute](./docs/html/CommandLineHelper.InternalAttribute.html)
+The [InternalAttribute](./CommandLineHelper/docs/html/CommandLineHelper.InternalAttribute.html) excludes a property of a parameter class, which otherwise qualifies as parameter property, from the parameter property handling. That means the property will not become a command line argument and will therefore not take part in the parse and validation process.
+That attribute is only of interest if you intent to implement some logic in the parameter class which requires a public read / write property. If that property shall not become a parameter property attach the [InternalAttribute](./CommandLineHelper/docs/html/CommandLineHelper.InternalAttribute.html)
 to it.
 
 Here is an example:
@@ -549,11 +549,11 @@ Here is an example:
 public int NotAParameter { get; set; }
 ```
 
-The [InternalAttribute](./docs/html/CommandLineHelper.InternalAttribute.html) is a marker attribute and doesn't have an argument.
+The [InternalAttribute](./CommandLineHelper/docs/html/CommandLineHelper.InternalAttribute.html) is a marker attribute and doesn't have an argument.
 
 ---
 
-The [MandatoryAttribute](./docs/html/CommandLineHelper.MandatoryAttribute.html) marks a parameter property as mandatory. Properties marked as mandatory must be part of the arguments collection. Otherwise the validation will fail. A mandatory parameter property which also has a default value is not longer mandatory for obvious reasons.
+The [MandatoryAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MandatoryAttribute.html) marks a parameter property as mandatory. Properties marked as mandatory must be part of the arguments collection. Otherwise the validation will fail. A mandatory parameter property which also has a default value is not longer mandatory for obvious reasons.
 
 Let's change the 'ExpressDelivery' parameter property from the example program. First make the type a nullable boolean. That way the property gets a 'null' as default value. Next add the Mandatory attribute. And just to make it complete, add a description.
 
@@ -566,17 +566,17 @@ public Boolean? ExpressDelivery {get; set;}
 
 The help screen will look like this:
 
-![MandatoryAttribute](./docs/images/MandatoryAttribute.png)
+![MandatoryAttribute](./CommandLineHelper/docs/images/MandatoryAttribute.png)
 
 Running the program without the mandatory argument will give you this result:
 
-![MandatoryMissingValidationSummary](./docs/images/MandatoryMissingValidationSummary.png)
+![MandatoryMissingValidationSummary](./CommandLineHelper/docs/images/MandatoryMissingValidationSummary.png)
 
 That is because a 'null' value is not accepted as default value for a mandatory parameter property.
 
 ---
 
-The [MaxStringLengthAttribute](./docs/html/CommandLineHelper.MaxStringLengthAttribute.html) constraints the input of the attached string parameter property to the length given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the string length of the attached parameter property exceeds the allowed length.
+The [MaxStringLengthAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MaxStringLengthAttribute.html) constraints the input of the attached string parameter property to the length given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the string length of the attached parameter property exceeds the allowed length.
 
 Here is an example:
 
@@ -589,24 +589,24 @@ public String RecipientName { get; set; }
 
 Calling the test program with an invalid long value on the 'RecipientName' leads to this result:
 
-![MaxStringLengthAttribute](./docs/images/MaxStringLengthAttribute.png)
+![MaxStringLengthAttribute](./CommandLineHelper/docs/images/MaxStringLengthAttribute.png)
 
 ---
 
-The [MaxValueAttribute](./docs/html/CommandLineHelper.MaxValueAttribute.html) constraints the input of the attached number parameter property to the value given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the value of the attached parameter property exceeds the maximum value.
+The [MaxValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MaxValueAttribute.html) constraints the input of the attached number parameter property to the value given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the value of the attached parameter property exceeds the maximum value.
 
 ---
 
-The [MinStringLengthAttribute](./docs/html/CommandLineHelper.MaxStringLengthAttribute.html) constraints the input of the attached string parameter property to the length given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the string length of the attached parameter property undercuts the minimum length.
+The [MinStringLengthAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MaxStringLengthAttribute.html) constraints the input of the attached string parameter property to the length given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the string length of the attached parameter property undercuts the minimum length.
 
 ---
 
-The [MinValueAttribute](./docs/html/CommandLineHelper.MinValueAttribute.html) constraints the input of the attached number parameter property to the value given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the value of the attached parameter property undercuts the minimum value.
+The [MinValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MinValueAttribute.html) constraints the input of the attached number parameter property to the value given in the attribute constructor. The constructor requires also an error message string. That message will be shown if the value of the attached parameter property undercuts the minimum value.
 
 ---
 
-The [NameAttribute](./docs/html/CommandLineHelper.NameAttribute.html) gives you the opportunity to create an alias for the parameter properties which will be use on the command line. That might be necessary if you have to follow strict naming conventions in your style guides. Such conventions often lead to lengthy identifiers. That's a good thing for code quality but is a pain for persons who have to type that names as command line arguments. In order to make your command line program easier to use create an alias for the parameter properties which can be shorten without loosing their meaning.    
-Let's do it for the 'RecipientName' in the test program. Don't forget to change the error message of the [MaxStringLengthAttribute](./docs/html/CommandLineHelper.MaxStringLengthAttribute.html) attribute to reflect the new name. Since we already working on the 'RecipientName' let's make it complete and give the parameter property a description.
+The [NameAttribute](./CommandLineHelper/docs/html/CommandLineHelper.NameAttribute.html) gives you the opportunity to create an alias for the parameter properties which will be use on the command line. That might be necessary if you have to follow strict naming conventions in your style guides. Such conventions often lead to lengthy identifiers. That's a good thing for code quality but is a pain for persons who have to type that names as command line arguments. In order to make your command line program easier to use create an alias for the parameter properties which can be shorten without loosing their meaning.    
+Let's do it for the 'RecipientName' in the test program. Don't forget to change the error message of the [MaxStringLengthAttribute](./CommandLineHelper/docs/html/CommandLineHelper.MaxStringLengthAttribute.html) attribute to reflect the new name. Since we already working on the 'RecipientName' let's make it complete and give the parameter property a description.
 
 Here is an example:
 
@@ -621,11 +621,11 @@ This name will now be used on the command line to set the value for the 'Recipie
 
 The help screen will look like this:
 
-![NameAttribute](./docs/images/NameAttribute.png "Name attribute on the RecipientName parameter property")
+![NameAttribute](./CommandLineHelper/docs/images/NameAttribute.png "Name attribute on the RecipientName parameter property")
 
 ---
 
-The [ValueSetAttribute](./docs/html/CommandLineHelper.ValueSetAttribute.html) constraints the input of the attached parameter property to the elements defined in the attribute constructor. Creating a value set for a parameter property of type string could look like this:
+The [ValueSetAttribute](./CommandLineHelper/docs/html/CommandLineHelper.ValueSetAttribute.html) constraints the input of the attached parameter property to the elements defined in the attribute constructor. Creating a value set for a parameter property of type string could look like this:
 
 ``` cs
     [ValueSet(new object[] {"Left", "Right", "Top", "Down"})]
@@ -648,7 +648,7 @@ Creating a value set for a parameter property of some number type might look lik
     }
 ```
 
-You might combine the [ValueSetAttribute](./docs/html/CommandLineHelper.ValueSetAttribute.html) and the [DefaultValueAttribute](./docs/html/CommandLineHelper.DefaultValueAttribute.html) attribute like in the example above. For obvious reasons the default value must be one of the value set elements. Otherwise the parameter property will never validate with the default value.  
+You might combine the [ValueSetAttribute](./CommandLineHelper/docs/html/CommandLineHelper.ValueSetAttribute.html) and the [DefaultValueAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DefaultValueAttribute.html) attribute like in the example above. For obvious reasons the default value must be one of the value set elements. Otherwise the parameter property will never validate with the default value.  
 The values of the value set must be provided as an array of objects like in the examples above.
 
 ---
@@ -669,7 +669,7 @@ Command line parsing is a three fold task which consist of three subtasks.
 
 It doesn't matter if you write a parser for a command line application or your own next programming language, those sub-tasks are always the same.
 
-Naturally those subtasks are also part of this library. They are executed in the [Process](./docs/html/CommandLineHelper.ParameterBase.Process.html) function.
+Naturally those subtasks are also part of this library. They are executed in the [Process](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Process.html) function.
 
 Since the shell already provides the tokenized form of the command line arguments as an array of strings (the args array) I took advantage of that. The shell follows a simple rule to identify a token.  
 
@@ -677,13 +677,13 @@ Every character or character group which is separated from the neighboring chara
 
 That is the reason why I declared the rule that every command line argument must have the form **'ArgumentName'='ArgumentValue'**. Since there is no space allowed between the argument name, the equal sign and the argument value, the whole expression is identified as one token. That makes it easy to process the command line arguments. I only have to split the token at the equal sign and know that the first part is the name of the command line argument and the second part the value. I don't have to look for dash or double dash or slash prefixes to identify the argument name. I also don't have to worry about arguments which are named but doesn't have a value assigned. Another advantage is the fact that I don't have to worry about positional arguments. Since all arguments are name arguments, they might appear in any possible order on the command line.  
 
-That leaves the parsing and validation part to implement. As you might guess there is a [Parse](./docs/html/CommandLineHelper.ParameterBase.Parse.html) and a [Validate](./docs/html/CommandLineHelper.ParameterBase.Validate.html) function implemented.
+That leaves the parsing and validation part to implement. As you might guess there is a [Parse](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Parse.html) and a [Validate](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Validate.html) function implemented.
 
-The [Process](./docs/html/CommandLineHelper.ParameterBase.Process.html) function creates the usage screen if the args array is empty and the 'showUsageOnEmptyArgs' flag was set to true. The process function also creates the help screen, version screen or validation summary if necessary and prints them out. But the process function leaves the parsing and validation to the dedicated functions.
+The [Process](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Process.html) function creates the usage screen if the args array is empty and the 'showUsageOnEmptyArgs' flag was set to true. The process function also creates the help screen, version screen or validation summary if necessary and prints them out. But the process function leaves the parsing and validation to the dedicated functions.
 
 #### Enhanced parsing
 
-The [Parse](./docs/html/CommandLineHelper.ParameterBase.Parse.html) function is declared as a virtual function on the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class. If you need to parse command line arguments which aren't supported by the [Parse](./docs/html/CommandLineHelper.ParameterBase.Parse.html) function of the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class, you have to override this function.
+The [Parse](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Parse.html) function is declared as a virtual function on the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class. If you need to parse command line arguments which aren't supported by the [Parse](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Parse.html) function of the [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) class, you have to override this function.
 
 Here is an example which shows how the function might look:
 
@@ -829,15 +829,15 @@ namespace TestCommand
 
 Since this framework only supports booleans, most number formats and strings, you might run into a situation where you need to validate a parameter property with an unsupported type. There are two options to enhance the validation in order to reach that goal.
 
-1) Create a new validation attribute which derives from [ValidationAttributeBase](./docs/html/CommandLineHelper.ValidationAttributeBase.html) and assign that attribute to the parameter property.
+1) Create a new validation attribute which derives from [ValidationAttributeBase](./CommandLineHelper/docs/html/CommandLineHelper.ValidationAttributeBase.html) and assign that attribute to the parameter property.
 
-2) Override the [ParameterBase.Validate](./docs/html/CommandLineHelper.ParameterBase.Validate.html) function in your parameter class and implement the necessary validation logic.
+2) Override the [ParameterBase.Validate](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Validate.html) function in your parameter class and implement the necessary validation logic.
 
 Both solutions have advantages and disadvantages.
 
 Creating validation attributes for your own need comes with a clean separation of concern. Over time you might create your own validator library which can be used in different projects and meets all your requirements. This solution comes with the penalty for more serious testing. You wouldn't want to create a buggy library which spoils all projects which use this library.
 
-Overriding the [ParameterBase.Validate](./docs/html/CommandLineHelper.ParameterBase.Validate.html) function is the more flexible solution. This approach gives you the freedom to implement validation logic which couldn't possibly implemented in a validation attribute. Obviously that approach works only for the single parameter object where you override the validate function. The reusability of that approach is zero.
+Overriding the [ParameterBase.Validate](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Validate.html) function is the more flexible solution. This approach gives you the freedom to implement validation logic which couldn't possibly implemented in a validation attribute. Obviously that approach works only for the single parameter object where you override the validate function. The reusability of that approach is zero.
 
 Here is an example for the first approach where you create your own validator attribute. The code is part of the **TestValidationExpandedCommand** project, which itself is part of the integration test. You might use that code as a starting point for your own implementation. The example implements a validation attribute which validates the formal correctness of email addresses.
 
@@ -929,7 +929,7 @@ namespace TestCommand
 }// END namespace
 ```
 
-The following example is an example for the second approach where you override the [ParameterBase.Validate](./docs/html/CommandLineHelper.ParameterBase.Validate.html) function to implement the necessary validation logic. The validation logic validates a [DateTime](https://docs.microsoft.com/en-us/dotnet/api/system.datetime?view=netcore-3.1) object and fails if the value isn't a date at least 2 days in the future. This kind of validation isn't possible with a validation attribute. Attributes only accept values which are known at compile time. A calculated value like 2 days in the future can't possibly be known at compile time.  
+The following example is an example for the second approach where you override the [ParameterBase.Validate](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.Validate.html) function to implement the necessary validation logic. The validation logic validates a [DateTime](https://docs.microsoft.com/en-us/dotnet/api/system.datetime?view=netcore-3.1) object and fails if the value isn't a date at least 2 days in the future. This kind of validation isn't possible with a validation attribute. Attributes only accept values which are known at compile time. A calculated value like 2 days in the future can't possibly be known at compile time.  
 (It can be known at the day you compile your program but will be the wrong value the next day.)  
 The code is part of the **TestValidationExpandedCommand** project, which itself is part of the integration test. You might use that code as a starting point for your own implementation.
 
@@ -1001,26 +1001,26 @@ The code is part of the **TestValidationExpandedCommand** project, which itself 
 
 ### Create or modify screens
 
-The screens which come with this library in the basic configuration are all created by the [DisplayHelper](./docs/htm/../html/CommandLineHelper.DisplayHelper.html) class. The class itself is a reference implementation of the [IDisplayHelper](./docs/html/CommandLineHelper.IDisplayHelper.html) interface. If you decide to use that class in the constructor of your own parameter object, you will get the screens you have seen so far.
+The screens which come with this library in the basic configuration are all created by the [DisplayHelper](./CommandLineHelper/docs/htm/../html/CommandLineHelper.DisplayHelper.html) class. The class itself is a reference implementation of the [IDisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.IDisplayHelper.html) interface. If you decide to use that class in the constructor of your own parameter object, you will get the screens you have seen so far.
 
 If you intend to modify those screens or create your own screens you have a multitude of options. The options are:
 
-1) Modify the [DisplayHelper](./docs/htm/../html/CommandLineHelper.DisplayHelper.html) class or create a class which inherits from [DisplayHelper](./docs/htm/../html/CommandLineHelper.DisplayHelper.html) and override some or all functions which create screens.
+1) Modify the [DisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.DisplayHelper.html) class or create a class which inherits from [DisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.DisplayHelper.html) and override some or all functions which create screens.
 
-2) Create a class which implements the [IDisplayHelper](./docs/html/CommandLineHelper.IDisplayHelper.html) interface and use that class in the constructor of your own parameter class.
+2) Create a class which implements the [IDisplayHelper](./CommandLineHelper/docs/html/CommandLineHelper.IDisplayHelper.html) interface and use that class in the constructor of your own parameter class.
 
-3) Override one or all of the following functions of the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class in your own parameter class.  
-[ParameterBase.CreateHelp](./docs/html/CommandLineHelper.ParameterBase.CreateHelp.html)  
-[ParameterBase.CreateUsage](./docs/html/CommandLineHelper.ParameterBase.CreateUsage.html)  
-[ParameterBase.CreateValidationSummary](./docs/html/CommandLineHelper.ParameterBase.CreateValidationSummary.html)  
-[ParameterBase.CreateVersion](./docs/html/CommandLineHelper.ParameterBase.CreateVersion.html)
+3) Override one or all of the following functions of the [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) class in your own parameter class.  
+[ParameterBase.CreateHelp](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.CreateHelp.html)  
+[ParameterBase.CreateUsage](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.CreateUsage.html)  
+[ParameterBase.CreateValidationSummary](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.CreateValidationSummary.html)  
+[ParameterBase.CreateVersion](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.CreateVersion.html)
 
 The first option might be the most convenient if there is only little to change and you might want to see that changes in the future in all your command line programs. Make the modified class part of a library and use this class for all future command line projects.
 
 The second option gives you the freedom to create screens which meets your own style requirements. As with the first option, you might want to make this class available in a library.
 
-The third option gives you the freedom to modify any screen before it gets rendered on the command line. Override the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) functions to modify any of the given screens.
-The third option gives you also the opportunity to go without any [DisplayHelper](./docs/htm/../html/CommandLineHelper.DisplayHelper.html) at all. Leave the 'displayHelper' parameter in your parameter class out and create all help screens in the overridden functions. Obviously the reusability of the last approach is zero. The modification will only appear in the screens of the parameter class where you override the base functions.
+The third option gives you the freedom to modify any screen before it gets rendered on the command line. Override the [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) functions to modify any of the given screens.
+The third option gives you also the opportunity to go without any [DisplayHelper](./CommandLineHelper/docs/htm/../html/CommandLineHelper.DisplayHelper.html) at all. Leave the 'displayHelper' parameter in your parameter class out and create all help screens in the overridden functions. Obviously the reusability of the last approach is zero. The modification will only appear in the screens of the parameter class where you override the base functions.
 
 ### Technical documentation
 
@@ -1062,9 +1062,9 @@ All value types (Boolean, Char, and number types) also support their nullable co
 
 There are two special command line arguments. One is the argument which marks a help request and one is the argument which marks a version request.
 
-The strings which qualify as a help request on the command line are defined in the [HelpIndicatorList](./docs/html/CommandLineHelper.ParameterBase.HelpIndicatorList.html) property of the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class. You can add values to that list or remove values from that list as it meets your requirements best. The first value in that list is rendered in the generic usage screen and the help screen.
+The strings which qualify as a help request on the command line are defined in the [HelpIndicatorList](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.HelpIndicatorList.html) property of the [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) class. You can add values to that list or remove values from that list as it meets your requirements best. The first value in that list is rendered in the generic usage screen and the help screen.
 
-The strings which qualify as a version request on the command line are defined in the [VersionIndicatorList](./docs/html/CommandLineHelper.ParameterBase.VersionIndicatorList.html) of the [ParameterBase](./docs/html/CommandLineHelper.ParameterBase.html) class. You can add values to hat list or remove values from that list as it meets your requirements best. The first value in that list is rendered in the generic usage screen and the help screen.
+The strings which qualify as a version request on the command line are defined in the [VersionIndicatorList](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.VersionIndicatorList.html) of the [ParameterBase](./CommandLineHelper/docs/html/CommandLineHelper.ParameterBase.html) class. You can add values to hat list or remove values from that list as it meets your requirements best. The first value in that list is rendered in the generic usage screen and the help screen.
 
 The library is designed to be expandable to meet more advanced requirements. Please read the [Enhanced parsing](#enhanced-parsing), [Enhanced validatioon](#enhanced-validation) and [Create or modify screens](#create-or-modify-screens) section in order to learn the necessary steps.
 
@@ -1072,7 +1072,7 @@ The library is designed to be expandable to meet more advanced requirements. Ple
 
 The class documentation created from the class comments is available at the "/docs/html/" folder in the *'CommandLineHelper'* project.
 
-[Class documentation](./docs/html/_toc.CommandLineHelper.html)
+[Class documentation](./CommandLineHelper/docs/html/_toc.CommandLineHelper.html)
 
 ### Design decisions
 
@@ -1096,7 +1096,7 @@ Those conventions were invented at a time where all computer users where suppose
 How does that fit to the computer skills you can expect from an averaged user?  
 Take a look at the chart created from a ***OECD Skills Research***.
 
-![Computer skill levels by country](./docs/images/computer-skill-levels-by-country.png "Computer skill levels by country")
+![Computer skill levels by country](./CommandLineHelper/docs/images/computer-skill-levels-by-country.png "Computer skill levels by country")
 
 Here is the link to the whole article.  
 ["The Distribution of Users’ Computer Skills: Worse Than You Think"](https://www.nngroup.com/articles/computer-skill-levels/)
@@ -1105,7 +1105,7 @@ Here is the link to the whole article.
 
 ***Share of households with a computer at home worldwide from 2005 to 2019***
 
-!["Households with access to computer"](./docs/images/Households_With_Access_To_Computer.png "Households with access to computer 2005 - 2018")
+!["Households with access to computer"](./CommandLineHelper/docs/images/Households_With_Access_To_Computer.png "Households with access to computer 2005 - 2018")
 
 Here is the link to the source.  
 [Households with access to computer](https://www.statista.com/statistics/748551/worldwide-households-with-computer/)
@@ -1116,7 +1116,7 @@ With that in mind take a look at one of the basic commands on every operating sy
 
 Here is the help screen:
 
-![Linux CP](./docs/images/cp-help.png "Linux CP help screen")
+![Linux CP](./CommandLineHelper/docs/images/cp-help.png "Linux CP help screen")
 
 I highlighted some parts of the help screen in red. Those are the parts I want to discuss.
 
@@ -1165,19 +1165,19 @@ The first 5 rules are simply the results of the aforementioned problems. The 6st
 
 The usage screen looks like this:
 
-![dotnet usage](./docs/images/dotnet-usage.png "Dotnet usage screen")
+![dotnet usage](./CommandLineHelper/docs/images/dotnet-usage.png "Dotnet usage screen")
 
 In search of the sub-commands you might try the help screen.  
 
 The help screen looks like this:
 
-![dotnet help screen](./docs/images/dotnet-help-sub-commands.png "Dotnet help screen with subcommands")
+![dotnet help screen](./CommandLineHelper/docs/images/dotnet-help-sub-commands.png "Dotnet help screen with subcommands")
 
 There are more than 20 sub-commands available. Those sub-commands have all a well defined purpose, but nothing in common, except for the fact that they are CLI commands provided by the dotnet framework. So why are they implemented as sub-commands? It is obviously a violation of the single responsibility rule. But it is also an annoying additional layer of complexity without any need or benefit.  
 All shells I know, offer command expansion. That is the function which shows every matching command after entering the first few characters of a command and hitting the [TAB] key. That makes the [TAB] key the most powerful key on the command line. Here is an example for a command implementation, which at least followed the single responsibility rule. The ```grub``` command.
 Enter the first two character of the ```grub``` command and hit the [TAB] key twice. You should see a screen which looks similar to the screenshot below.
 
-![grub command](./docs/image/../images/grub-command.png "The grub command")
+![grub command](./CommandLineHelper/docs/images/grub-command.png "The grub command")
 
 After that you could go on typing and hit the [TAB] key again to narrow down the selection, or you keep on typing until there is only one possible selection left and hit the [TAB] key to complete the command. That is the fastest way to navigate through the myriads of commands on the command line with minimal typing effort. I entered only two characters on the command line and hit the [TAB] key to got a complete list of available ```grub``` commands. Now take a look at the ```dotnet``` command. You might guess that there should be a build or run command, but there is no way to get that information without calling the ```dotnet``` command with the help parameter set in the first place. Than you get the list of available sub-commands but you need to call the ```dotnet sub-command``` help a second time to learn about the sub-command parameter.
 
@@ -1188,7 +1188,7 @@ That is annoying on the first hand and increases the rate of typos on the other 
 The command expansion is also the reason why abbreviated command names don't make any sense. Remember the imagined average computer user which tried to find the right command to copy a file. He couldn't find the command because the command is abbreviated to 'cp'.
 But if the command would have it's natural name 'copy', finding the right command would be easy. Since the user already knows what a copy command is and how to write it, the first two characters of 'copy' and some hits on the [TAB] key would have been sufficient to find the right command. But no luck with that. Give it a test and you get a result similar to this.
 
-![co tab](./docs/images/co-tab.png "co tab result")
+![co tab](./CommandLineHelper/docs/images/co-tab.png "co tab result")
 
 You get a list of at least 20 commands but none of the commands deals with copying files.
 
