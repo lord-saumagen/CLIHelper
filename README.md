@@ -123,7 +123,7 @@ The directory structure looks like this:
 
 ### The Basics
 
-The most important part of the solution is the [ParameterBase](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.md) class. Create a subclass which inherits from ParameterBase and add public read / write properties to that class. Those public properties will become the command line arguments of your command line application. I will call them **parameter properties** from now on. I call the classes which derive from [ParameterBase](./CommandLineHelper/markdown/html/CommandLineHelper.ParameterBase.md) **parameter classes** accordingly.
+The most important part of the solution is the [ParameterBase](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.md) class. Create a subclass which inherits from ParameterBase and add public read / write properties to that class. Those public properties will become the command line arguments of your command line application. I will call them **parameter properties** from now on. I call the classes which derive from [ParameterBase](./CommandLineHelper/markdown/CommandLineHelper.ParameterBase.md) **parameter classes** accordingly.
 
 In a second step you have to change the 'Main' function of your command line program. Lets say you created a 'ParameterObject' class which derived from 'ParameterBase'. In order to benefit from that class create a new instance of that class in your 'Main' function. The constructor requires your program name as it is used on the command line. That name might differ from the program name you use during development. But in most cases it's the same. As a second parameter a reference to an assembly is required. That should be the assembly which hosts your program. The assembly reference is used to determine the program version. I will come to that later.
 
@@ -431,7 +431,7 @@ Two of them are class attributes. 10 of them are property attributes.
 
 #### Class attributes
 
-1. [HelpAttribute](./CommandLineHelper/dosc/markdown/CommandLineHelper.HelpAttribute.md)
+1. [HelpAttribute](./CommandLineHelper/docs/markdown/CommandLineHelper.HelpAttribute.md)
 2. [UsageAttribute](./CommandLineHelper/docs/markdown/CommandLineHelper.UsageAttribute.md)
 
 The intended use is to attach them to a parameter class.  
@@ -457,7 +457,7 @@ namespace TestCommand
     .
 ```
 
-The text provided in the [HelpAttribute](./CommandLineHelper/doc/markdown/CommandLineHelper.HelpAttribute.md) constructor will become part of the help screen if you use the [DisplayHelper](./CommandLineHelper/docs/markdown/CommandLineHelper.DisplayHelper.md) class in your 'ParameterClass'. The text will be shown on top of the generic help screen.
+The text provided in the [HelpAttribute](./CommandLineHelper/docs/markdown/CommandLineHelper.HelpAttribute.md) constructor will become part of the help screen if you use the [DisplayHelper](./CommandLineHelper/docs/markdown/CommandLineHelper.DisplayHelper.md) class in your 'ParameterClass'. The text will be shown on top of the generic help screen.
 
 ![HelpAttribute](./CommandLineHelper/docs/images/HelpAttribute.png)
 
@@ -683,7 +683,7 @@ The [Process](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.
 
 #### Enhanced parsing
 
-The [Parse](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.Parse.md) function is declared as a virtual function on the [ParameterBase](./docs/markdown/CommandLineHelper.ParameterBase.md) class. If you need to parse command line arguments which aren't supported by the [Parse](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.Parse.md) function of the [ParameterBase](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.md) class, you have to override this function.
+The [Parse](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.Parse.md) function is declared as a virtual function on the [ParameterBase](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.md) class. If you need to parse command line arguments which aren't supported by the [Parse](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.Parse.md) function of the [ParameterBase](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.md) class, you have to override this function.
 
 Here is an example which shows how the function might look:
 
@@ -1001,7 +1001,7 @@ The code is part of the **TestValidationExpandedCommand** project, which itself 
 
 ### Create or modify screens
 
-The screens which come with this library in the basic configuration are all created by the [DisplayHelper](./CommandLineHelper/docs/markdown/CommandLineHelper.DisplayHelper.md) class. The class itself is a reference implementation of the [IDisplayHelper](./CommandLineHelper/markdown/html/CommandLineHelper.IDisplayHelper.md) interface. If you decide to use that class in the constructor of your own parameter object, you will get the screens you have seen so far.
+The screens which come with this library in the basic configuration are all created by the [DisplayHelper](./CommandLineHelper/docs/markdown/CommandLineHelper.DisplayHelper.md) class. The class itself is a reference implementation of the [IDisplayHelper](./CommandLineHelper/markdown/CommandLineHelper.IDisplayHelper.md) interface. If you decide to use that class in the constructor of your own parameter object, you will get the screens you have seen so far.
 
 If you intend to modify those screens or create your own screens you have a multitude of options. The options are:
 
@@ -1221,7 +1221,7 @@ See [(MS-PL)]([LICENSE](https://opensource.org/licenses/MS-PL)) for more informa
 |<a id="GUI"></a>GUI| Graphic User Interface |
 |<a id="HEADLESS"></a>Headless | A 'headless' installation is a software installation without a graphic user interface. Typically used on embedded devices, in virtualization environments like docker or as server installations.|
 |<a id="OS"></a>OS | Operation System |
-|<a id="parameter-class"></a>parameter class | Per definition all classes which derive from [ParamterBase](./docs/markdown/CommandLineHelper.ParameterBase.md)|
+|<a id="parameter-class"></a>parameter class | Per definition all classes which derive from [ParamterBase](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.md)|
 |<a id="parameter-properties"></a>parameter properties | Per definition all public read / write properties of a parameter class.|
 |<a id="POWERSHELL"></A>Powershell | A microsoft command Line Interpreter available on windows and linux operation systems |
 |<a id="SHELL"></a>Shell | Command Line Interpreter on linux operation systems. |
