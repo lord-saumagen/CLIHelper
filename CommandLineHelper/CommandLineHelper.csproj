@@ -8,13 +8,20 @@
     <Authors>Lord Saumagen (Lord.Saumagen@outlook.com)</Authors>
     <Company>Private</Company>
     <NeutralLanguage>en</NeutralLanguage>
+    <Title>CommandLineHelper</Title>
     <Description>
       The purpose of this library is to simplify and unify the 
-      mundane task of command line parsing and validating.
+      mundane task of command line parsing and validating on
+      Windows and Linux systems.
+      Please check the project website for further documentation.
     </Description>
-    <RepositoryUrl>Repo URL</RepositoryUrl>
+    <PackageTags>Command-line, Console, Interpreter, Parser</PackageTags>
+    <PackageId>CommandLineHelper</PackageId>
+    <PackageProjectUrl>https://github.com/lord-saumagen/CLIHelper</PackageProjectUrl>
+    <PackageReleaseNotes>Initial release</PackageReleaseNotes>
     <PackageLicenseUrl>https://opensource.org/licenses/MS-PL</PackageLicenseUrl>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <RepositoryUrl>https://github.com/lord-saumagen/CLIHelper</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <!-- 
@@ -37,5 +44,36 @@
 <RepositoryType>Repo type</RepositoryType>
 <PackageTags>Tags</PackageTags>
 <PackageReleaseNotes>Release</PackageReleaseNotes>
+
+Title
+Summary
+
+Release Notes
+<PackageReleaseNotes>
+
+markdown
+
+Icon URL
+iconUrl is deprecated. Use icon instead.
+
+A URL for a 128x128 image with transparency background to use as the icon 
+for the package in UI display. Be sure this element contains the direct 
+image URL and not the URL of a web page containing the image. For example, 
+to use an image from GitHub, use the raw file URL like 
+https://github.com/<username>/<repository>/raw/<branch>/<logo.png>
+
+
+PackageIconUrl will be deprecated in favor of the new PackageIcon property.
+
+Starting with NuGet 5.3 & Visual Studio 2019 version 16.3, pack will raise 
+NU5048 warning if the package metadata only specifies PackageIconUrl.
+
+PackageIcon
+ Tip
+
+You should specify both PackageIcon and PackageIconUrl to maintain backward 
+compatibility with clients and sources that do not yet support PackageIcon. 
+Visual Studio will support PackageIcon for packages coming from a folder-based 
+source in a future release.
   -->
 </Project>

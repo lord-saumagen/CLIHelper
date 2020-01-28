@@ -19,6 +19,40 @@
         "reveal": "always"
       },
       "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build-nuget",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "pack",
+        "--configuration",
+        "release"
+      ],
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "build-release"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": "$msCompile",
+    },
+    {
+      "label": "build-release",
+      "command": "dotnet",
+      "type": "shell",
+      "args": [
+        "build",
+        "--configuration",
+        "release"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared"
+      },
+      "problemMatcher": "$msCompile",
     }
   ]
 }
