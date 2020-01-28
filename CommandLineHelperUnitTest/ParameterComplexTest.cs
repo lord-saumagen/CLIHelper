@@ -3,6 +3,7 @@ using CommandLineHelper;
 using System;
 using System.Linq;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace CommandLineHelper
 {
@@ -12,15 +13,15 @@ namespace CommandLineHelper
     //
     // Public property without a name and not market as internal.
     //
-    [Name("String")]
-    public string StringParam
+    [Name("Char")]
+    public char CharParam
     {
       get;
       set;
     }
 
-    [Name("Char")]
-    public char CharParam
+    [Name("String")]
+    public string StringParam
     {
       get;
       set;
@@ -360,6 +361,8 @@ namespace CommandLineHelper
       ParameterComplex parameterComplex = new ParameterComplex("ParameterComplexTest", Assembly.GetExecutingAssembly());
       string helpStr = parameterComplex.CreateHelp();
       Assert.IsNotNull(helpStr);
+
+      Debugger.Log(1, "HelpTest", helpStr);
     }
 
   }// END class

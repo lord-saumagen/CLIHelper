@@ -7,6 +7,18 @@ using System.Globalization;
 namespace CommandLineHelper
 {
 
+  /// <summary>
+  /// The 'DisplayHelper' class is a reference implementation of the 'IDisplayHelper'
+  /// interface.
+  /// <para>
+  /// The purpose of the 'DisplayHelper' class is to simplify the screen rendering.
+  /// The class offers functions to create the output strings for the help screen,
+  /// usage screen, the validation summary screen and the version screen.
+  /// </para>
+  /// <para>
+  ///   <see cref="IDisplayHelper" />
+  /// </para>
+  /// </summary>
   public class DisplayHelper : IDisplayHelper
   {
 
@@ -31,10 +43,16 @@ namespace CommandLineHelper
     // ************************************************************************
 
     /// <summary>
-    /// Create the help for the parameter object provided in argument 
-    /// 'parameterObject'. The line length of the resulting help text
-    /// will match with value provide in argument 'screenWidth'.
-    /// The help is supposed to be rendered on the command line.
+    /// Creates the help screen for the parameter object provided in argument 
+    /// 'parameterObject'. 
+    /// <para>
+    /// The line length of the resulting help text will match with value provide in argument 'screenWidth'
+    /// as long a the value is greater than the minimum screen line length. Otherwise the minimum screen
+    /// line length will be used.
+    /// </para>
+    /// <para>
+    /// The result string is supposed to be rendered on the command line.
+    /// </para>
     /// </summary>
     /// <param name="parameterObject"></param>
     /// <param name="screenWidth"></param>
@@ -45,6 +63,8 @@ namespace CommandLineHelper
       int longestArgumentLength;
       int longestTypeLength;
       int longestDefaultLength;
+      string help;
+      List<string> helpLines;
 
       result = string.Empty;
       longestArgumentLength = 0;
@@ -54,12 +74,20 @@ namespace CommandLineHelper
         return result;
       }
 
-#if !DEBUG
-      if (Console.WindowWidth <= screenWidth)
+      HelpAttribute? helpAttribute = (HelpAttribute?)parameterObject.GetType().GetCustomAttribute(typeof(HelpAttribute));
+
+      //
+      // If a help text is provided in the command attributes show that text first.
+      //
+      if ((helpAttribute != null) && !String.IsNullOrWhiteSpace(helpAttribute.Help))
       {
-        Console.WindowWidth = screenWidth + 4;
+        help = helpAttribute.Help;
       }
-#endif
+      else
+      {
+        help = string.Empty;
+      }
+
 
       if (parameterObject.PropertyMetaInfoList.Count == 0)
       {
@@ -72,14 +100,38 @@ namespace CommandLineHelper
         longestTypeLength = parameterObject.PropertyMetaInfoList.Max(item => item.Type.Length);
         longestDefaultLength = parameterObject.PropertyMetaInfoList.Max(item => (item.DefaultValue?.ToString()?.Length ?? 0));
 
-        longestArgumentLength = (longestArgumentLength > "[Parameter]".Length) ? longestArgumentLength : "[Parameter]".Length;
-        longestTypeLength = (longestTypeLength > "[Type]".Length) ? longestTypeLength : "[Type]".Length;
-        longestDefaultLength = (longestDefaultLength > "[Default]".Length) ? longestDefaultLength : "[Default]".Length;
+        longestArgumentLength = Math.Max(longestArgumentLength, "[Parameter]".Length); // [Parameter] = 11 characters min
+        longestTypeLength = Math.Max(longestTypeLength, "[Type]".Length); // [Type] = 6 characters min 
+        longestDefaultLength = Math.Max(longestDefaultLength, "[Default]".Length); // [Default] = 9 characters min
 
+        //
+        // Expand the screen width if there isn't at least 20 characters left for the description.
+        // Minimum length for the help screen is 11 + 6 + 9 + 20 for parameter, type default and description
+        // plus additional 15 characters for spaces and borders. That is 61 characters minimum.
+        //
+        if((longestArgumentLength + longestTypeLength + longestDefaultLength + 20) > screenWidth)
+        {
+          screenWidth = (longestArgumentLength + longestTypeLength + longestDefaultLength + 20);
+        }
 
-        result += CreateKeyDescription(screenWidth);
+        if(!String.IsNullOrWhiteSpace(help))
+        {
+          //
+          // Format the help text from the help attribute.
+          //
+          helpLines = CreateWrappedLines(help, screenWidth, leadingSpaces:0, keepEmptyLines:true);
+          result += "\r\n" + String.Join("\r\n", helpLines) + "\r\n\r\n";
+        }
+        
+
+        result += CreateHelpHeader(screenWidth);
 
         result += CreateHelpTop(screenWidth, longestArgumentLength, longestTypeLength, longestDefaultLength);
+
+        result += CreateHelpAndVersionArgumentHelpLines(parameterObject.HelpIndicatorList.First(), "Shows the help screen. (This screen).", screenWidth, longestArgumentLength, longestTypeLength, longestDefaultLength);
+        result += CreateHelpSeparatorLine(screenWidth, longestArgumentLength, longestTypeLength, longestDefaultLength);
+        result += CreateHelpAndVersionArgumentHelpLines(parameterObject.VersionIndicatorList.First(), "Shows the command version number if available or an empty string. (Nothing)", screenWidth, longestArgumentLength, longestTypeLength, longestDefaultLength);
+        result += CreateHelpSeparatorLine(screenWidth, longestArgumentLength, longestTypeLength, longestDefaultLength);
 
         for (int index = 0; index < parameterObject.PropertyMetaInfoList.Count; index++)
         {
@@ -101,54 +153,66 @@ namespace CommandLineHelper
 
     /// <summary>
     /// Creates a usage description for the command associated with the provided
-    /// 'parameterObject'. The usage description is either the one provided with
+    /// 'parameterObject'. 
+    /// <para>
+    /// The usage description is either the one provided with
     /// the 'UsageAttribute' or a generic description created from the known 
     /// parameter attributes.
+    /// </para>
+    /// <para>
+    /// The result string is supposed to be rendered on the command line.
+    /// </para>
     /// </summary>
     /// <param name="parameterObject"></param>
+    /// <param name="screenWidth"></param>
     /// <returns>The resulting string</returns>
-    public virtual string CreateUsage(ParameterBase parameterObject)
+    public virtual string CreateUsage(ParameterBase parameterObject, int screenWidth = 80)
     {
       string result;
+      string usage;
+
       result = String.Empty;
 
+      result += CreateUsageHeader(screenWidth);
       result += "Usage:\r\n\r\n";
       UsageAttribute? usageAttribute = (UsageAttribute?)parameterObject.GetType().GetCustomAttribute(typeof(UsageAttribute));
 
       //
-      // If a usage description is provided in the command attributes use return this description.
+      // If a usage description is provided in the command attributes return that description.
       //
       if ((usageAttribute != null) && !String.IsNullOrWhiteSpace(usageAttribute.Usage))
       {
-        result += usageAttribute.Usage;
+        usage = usageAttribute.Usage;
       }
       //
       // Create a usage description from the known parameter attributes.
       //
       else
       {
-        result += parameterObject.CommandName + " ";
-        result += "[" + parameterObject.HelpIndicatorList.First() + "] ";
-        result += "[" + parameterObject.VersionIndicatorList.First() + "] ";
+        usage = parameterObject.CommandName + " ";
+        usage += "[" + parameterObject.HelpIndicatorList.First() + "] ";
+        usage += "[" + parameterObject.VersionIndicatorList.First() + "] ";
         foreach (var metaInfo in parameterObject.PropertyMetaInfoList)
         {
-          if (metaInfo.Mandatory)
+          if (metaInfo.IsMandatory)
           {
-            result += metaInfo.Name + "=" + "<" + metaInfo.Type + "> ";
+            usage += metaInfo.Name + "=" + "<" + metaInfo.Type + "> ";
           }
           else
           {
-            result += "[" + metaInfo.Name + "=" + "<" + metaInfo.Type + ">" + "] ";
+            usage += "[" + metaInfo.Name + "=" + "<" + metaInfo.Type + ">" + "] ";
           }
         }
       }
-      return result + "\r\n";
+      
+      List<string> lines = CreateWrappedLines(usage, screenWidth, 0);
+      return result + String.Join("\r\n", lines);
     }
 
 
     /// <summary>
-    /// Creates a summary of the validation errors of the 'ParameterBase' object 
-    /// provided in 'parameterObject'.
+    /// Creates a summary of the validation errors of the parameter object 
+    /// provided in argument 'parameterObject'.
     /// <para>
     /// The message provided in argument 'message' will be shown on top of the summary.
     /// </para>
@@ -156,12 +220,15 @@ namespace CommandLineHelper
     /// The summary will be returned as a string with a line length matching with the 
     /// value of argument screenWidth.
     /// </para>
+    /// <para>
+    /// The result string is supposed to be rendered on the command line.
+    /// </para>
     /// </summary>
     /// <param name="parameterObject"></param>
     /// <param name="message"></param>
     /// <param name="screenWidth"></param>
     /// <returns>The resulting string</returns>
-    public virtual String CreateValidationSummary(ParameterBase parameterObject, string message = "One ore more of the command line arguments are invalid.", int screenWidth = 80)
+    public virtual String CreateValidationSummary(ParameterBase parameterObject, string message = "One or more of the command line arguments are invalid.", int screenWidth = 80)
     {
       string result;
       result = String.Empty;
@@ -182,6 +249,9 @@ namespace CommandLineHelper
     /// <para>
     /// The command object should be the command line program who's version should be displayed.
     /// </para>
+    /// <para>
+    /// The result string is supposed to be rendered on the command line.
+    /// </para>
     /// </summary>
     /// <param name="commandObject"></param>
     /// <returns>The version as string or the message: 'No version info available.'</returns>
@@ -201,10 +271,13 @@ namespace CommandLineHelper
     /// <summary>
     /// Returns the version of the provided 'commandObjectAssembly' as string.
     /// <para>
-    /// The command object should be the command line program who's version should be displayed.
+    /// The command object should be the assembly of the command line program who's version should be displayed.
+    /// </para>
+    /// <para>
+    /// The result string is supposed to be rendered on the command line.
     /// </para>
     /// </summary>
-    /// <param name="commandObject"></param>
+    /// <param name="commandObjectAssembly"></param>
     /// <returns>The version as string or the message: 'No version info available.'</returns>
     public virtual String CreateVersion(Assembly? commandObjectAssembly)
     {
@@ -223,44 +296,6 @@ namespace CommandLineHelper
       return version;
     }
 
-    /// <summary>
-    /// Prints the string provided in argument 'output' to the console using
-    /// the provided background and foreground colors.
-    /// After printing the original console colors get restored.
-    /// <para>
-    ///   The default colors are:
-    /// </para>
-    /// <para>
-    ///   backgroundColor = ConsoleColor.Black
-    /// </para>
-    /// <para>
-    ///   foregroundColor = ConsoleColor.White
-    /// </para>
-    /// </summary>
-    /// <param name="output"></param>
-    /// <param name="foregroundColor"></param>
-    /// <param name="backgroundColor"></param>
-    public virtual void PrintToConsole(string output, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
-    {
-      ConsoleColor savedBackgroundColor;
-      ConsoleColor savedForegroundColor;
-
-      if (String.IsNullOrWhiteSpace(output))
-      {
-        return;
-      }
-
-      savedBackgroundColor = Console.BackgroundColor;
-      savedForegroundColor = Console.ForegroundColor;
-
-      Console.BackgroundColor = backgroundColor;
-      Console.ForegroundColor = foregroundColor;
-
-      Console.Write(output);
-
-      Console.BackgroundColor = savedBackgroundColor;
-      Console.ForegroundColor = savedForegroundColor;
-    }
 
     // ************************************************************************
     // IDisplayHelper implementation END
@@ -366,6 +401,14 @@ namespace CommandLineHelper
     }
 
 
+    /// <summary>
+    /// The function creates the top of the help screen.
+    /// </summary>
+    /// <param name="screenWidth"></param>
+    /// <param name="longestArgumentLength"></param>
+    /// <param name="longestTypeLength"></param>
+    /// <param name="longestDefaultLength"></param>
+    /// <returns></returns>
     private static string CreateHelpTop(int screenWidth, int longestArgumentLength, int longestTypeLength, int longestDefaultLength)
     {
       string result;
@@ -395,6 +438,15 @@ namespace CommandLineHelper
     }
 
 
+    /// <summary>
+    /// The function creates a separator line which should be placed between
+    /// two entries in the help screen.
+    /// </summary>
+    /// <param name="screenWidth"></param>
+    /// <param name="longestArgumentLength"></param>
+    /// <param name="longestTypeLength"></param>
+    /// <param name="longestDefaultLength"></param>
+    /// <returns></returns>
     private static string CreateHelpSeparatorLine(int screenWidth, int longestArgumentLength, int longestTypeLength, int longestDefaultLength)
     {
       string result;
@@ -417,6 +469,51 @@ namespace CommandLineHelper
     }
 
 
+    /// <summary>
+    /// The function creates the help lines for the 'version' or 'help' indicator which are
+    /// part of the help screen.
+    /// </summary>
+    /// <param name="indicator">One of the elements from the version/help indicator list</param>
+    /// <param name="description">The description to show in the help screen</param>
+    /// <param name="screenWidth"></param>
+    /// <param name="longestArgumentLength"></param>
+    /// <param name="longestTypeLength"></param>
+    /// <param name="longestDefaultLength"></param>
+    /// <returns></returns>
+    private static string CreateHelpAndVersionArgumentHelpLines(string indicator, string description, int screenWidth, int longestArgumentLength, int longestTypeLength, int longestDefaultLength)
+    {
+      List<String> descriptionLines;
+
+      descriptionLines = CreateWrappedLines(description, screenWidth - longestArgumentLength - longestTypeLength - longestDefaultLength - 14);
+
+      for (int index = 0; index < descriptionLines.Count; index++)
+      {
+        string leadLine = string.Empty;
+        string defaultValueStr = string.Empty;
+        if (index == 0)
+        {
+          leadLine += VerticalLine;
+          leadLine += "-";
+          leadLine += VerticalLine + " ";
+          leadLine += indicator + new String(' ', longestArgumentLength - indicator.Length) + " ";
+        }
+        else
+        {
+          leadLine += VerticalLine + " " + VerticalLine + " ";
+          leadLine += new String(' ', longestArgumentLength) + " ";
+        }
+        leadLine += VerticalLine + " ";
+        leadLine += new String(' ', longestTypeLength) + " ";
+        leadLine += VerticalLine + " ";
+        leadLine += new String(' ', longestDefaultLength) + " ";
+        leadLine += VerticalLine;
+
+        descriptionLines[index] = leadLine + descriptionLines[index] + " " + VerticalLine + "\r\n";
+      }
+
+      return String.Concat(descriptionLines);
+    }
+
     private static string CreateHelpLines(PropertyMetaInfo propertyMetaInfo, int screenWidth, int longestArgumentLength, int longestTypeLength, int longestDefaultLength)
     {
       List<String> descriptionLines;
@@ -432,7 +529,7 @@ namespace CommandLineHelper
         if (index == 0)
         {
           leadLine += VerticalLine;
-          if (propertyMetaInfo.Mandatory)
+          if (propertyMetaInfo.IsMandatory)
           {
             leadLine += "+";
           }
@@ -455,7 +552,14 @@ namespace CommandLineHelper
             defaultValueStr = "Null";
           }
 
-          leadLine += defaultValueStr + new String(' ', longestDefaultLength - (defaultValueStr.Length)) + " ";
+          if((propertyMetaInfo.Type == "Char") && (propertyMetaInfo.DefaultValue != null) && ( ((Char) propertyMetaInfo.DefaultValue) == Char.MinValue))
+          {
+            leadLine += "\\0" + new String(' ', longestDefaultLength - ("\\0".Length)) + " ";
+          }
+          else
+          {
+            leadLine += defaultValueStr + new String(' ', longestDefaultLength - (defaultValueStr.Length)) + " ";
+          }
           leadLine += VerticalLine;
         }
         else
@@ -474,6 +578,14 @@ namespace CommandLineHelper
     }
 
 
+    /// <summary>
+    /// The function creates the bottom of the help screen.
+    /// </summary>
+    /// <param name="screenWidth"></param>
+    /// <param name="longestArgumentLength"></param>
+    /// <param name="longestTypeLength"></param>
+    /// <param name="longestDefaultLength"></param>
+    /// <returns></returns>
     private static string CreateHelpBottom(int screenWidth, int longestArgumentLength, int longestTypeLength, int longestDefaultLength)
     {
       string result;
@@ -496,31 +608,111 @@ namespace CommandLineHelper
       result += TJunctionDown;
       result += new string(HorizontalLine, longestDefaultLength + 2);
       result += TJunctionDown;
+
       result += new string(HorizontalLine, screenWidth - result.Length - 1);
       result += CornerBottomRight;
       return result + "\r\n";
     }
 
 
-    private static string CreateKeyDescription(int screenWidth)
+    private static string CreateHelpHeader(int screenWidth)
     {
       string result;
 
-      //╔═╦═════════════════════════════════════════════════════════════════════════════════╗
-      //║X║_Key description................................................................_║
-      //╚═╩═════════════════════════════════════════════════════════════════════════════════╝
+      //|1|-                                    76                                    -| 
+      //|0|_01234567890123456789012345678901234567890123456789012345678901234567890123_|
+      //╔═╦════════════════════════════════════════════════════════════════════════════╗
+      //║X║_Key description............................... ..........................._║
+      //╚═╩════════════════════════════════════════════════════════════════════════════╝
 
-      result = "" + CornerTopLeft + HorizontalLine + TJunctionUp + new string(HorizontalLine, screenWidth - 4) + CornerTopRight + "\r\n";
-      result += "" + VerticalLine + "+" + VerticalLine + (" Argument is mandatory." + new string(' ', screenWidth)).Substring(0, screenWidth - 4) + VerticalLine + "\r\n";
-      result += "" + VerticalLine + "-" + VerticalLine + (" Argument is optional." + new string(' ', screenWidth)).Substring(0, screenWidth - 4) + VerticalLine + "\r\n";
-      result += "" + CornerBottomLeft + HorizontalLine + TJunctionDown + new string(HorizontalLine, screenWidth - 4) + CornerBottomRight + "\r\n"; ;
+      result = string.Empty;
+      result +=  "" + CornerTopLeft + HorizontalLine + TJunctionUp + new string(HorizontalLine, screenWidth - 4) + CornerTopRight + "\r\n";
+      result +=  "" + VerticalLine + "+" + VerticalLine + (" Argument is mandatory." + new string(' ', screenWidth)).Substring(0, screenWidth - 4) + VerticalLine + "\r\n";
+      result +=  "" + VerticalLine + "-" + VerticalLine + (" Argument is optional." + new string(' ', screenWidth)).Substring(0, screenWidth - 4) + VerticalLine + "\r\n";
+      result +=  "" + CornerBottomLeft + HorizontalLine + TJunctionDown + new string(HorizontalLine, screenWidth - 4) + CornerBottomRight + "\r\n";
       result += "\r\n";
 
       return result;
     }
 
 
-    private static List<string> CreateWrappedLines(string line, int maxLineLength, int leadingSpaces = 1)
+    private static string CreateUsageHeader(int screenWidth)
+    {
+      string result;
+      List<string> wrappedLines;
+      List<string> printLines;
+
+
+      //|-  7  -|-                                 70                                 -| 
+      //|_01234_|_01234567890123456789012345678901234567890123456789012345678901234567_|
+      //╔═══════╦══════════════════════════════════════════════════════════════════════╗
+      //║_<...>-║_Argument value type and/or description.............................._║
+      //║_     -║_E.g. age=<Uint32, value must be greater than 18>...................._║
+      //║_<.|.>_║_Argument value type and/or description with alternative............._║
+      //║_     _║_E.g. married=<Boolean | Null>......................................._║
+      //║_[...]-║_Argument is optional..E.g. [email=<String>]........................._║
+      //╚═══════╩══════════════════════════════════════════════════════════════════════╝
+
+      printLines = new List<string>();
+
+      printLines.Add("" + CornerTopLeft + new String(HorizontalLine, 7)  + TJunctionUp + new string(HorizontalLine, screenWidth - 10) + CornerTopRight + "\r\n");
+
+      wrappedLines = CreateWrappedLines("Argument value type and/or description.\r\nE.g. \"age=<Uint32> Value must be greater than 18.\"", screenWidth - 10);
+      printLines.AddRange( CreateHelpHeaderPrintLines(wrappedLines, " <...> "));
+
+      wrappedLines = CreateWrappedLines("Argument value type and/or description with alternative.\r\nE.g. \"married=<Boolean|Null> Enter 'yes', 'no' or 'null' if unknown.\"", screenWidth - 10);
+      printLines.AddRange( CreateHelpHeaderPrintLines(wrappedLines, " <.|.> "));
+
+      wrappedLines = CreateWrappedLines("Argument is optional. E.g. \"[email=<String>]\"", screenWidth - 10);
+      printLines.AddRange( CreateHelpHeaderPrintLines(wrappedLines, " [...] "));
+
+      printLines.Add("" + CornerBottomLeft + new String(HorizontalLine, 7)  + TJunctionDown + new string(HorizontalLine, screenWidth - 10) + CornerBottomRight + "\r\n");
+
+      result = String.Join(null, printLines);
+      result += "\r\n";
+
+      return result;
+    }
+
+
+    private static List<string> CreateHelpHeaderPrintLines(List<string> wrappedLines, string marker)
+    {
+      List<string> result;
+
+      result = new List<string>();
+
+      for(int index = 0; index < wrappedLines.Count; index ++)
+      {
+        string line = string.Empty;
+        if(index == 0)
+        {
+           line += "" + VerticalLine + marker + VerticalLine;    
+        }
+        else
+        {
+           line += "" + VerticalLine + "       " + VerticalLine;    
+        }
+        line += wrappedLines[index] +  VerticalLine + "\r\n";
+        result.Add(line);
+      }
+
+      return result;
+    }
+
+
+    /// <summary>
+    /// Wraps the string provided in argument 'text' at least at the
+    /// maximum line length provided in argument 'maxLineLength'.
+    /// The function respects the line breaks which might already
+    /// part of the text. 
+    /// The function returns the result as a list of strings.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="maxLineLength"></param>
+    /// <param name="leadingSpaces"></param>
+    /// <param name="keepEmptyLines"></param>
+    /// <returns></returns>
+    public static List<string> CreateWrappedLines(string text, int maxLineLength, int leadingSpaces = 1, bool keepEmptyLines = false)
     {
       List<string> sourceLines;
       List<string> resultLines;
@@ -528,13 +720,13 @@ namespace CommandLineHelper
       sourceLines = new List<string>();
       resultLines = new List<string>();
 
-      line = line.Trim();
+      text = text.Trim();
 
-      sourceLines = BreakLineAtLineBreak(line);
+      sourceLines = BreakTextAtLineBreak(text, keepEmptyLines:keepEmptyLines);
 
       //
       // Check that each source line fits into the available
-      // descriptions space. Add line breaks if necessary.
+      // space. Add line breaks if necessary.
       //
       foreach (var sourceLine in sourceLines)
       {
@@ -561,28 +753,40 @@ namespace CommandLineHelper
     }
 
 
-    //
-    // Break the line on all line breaks which are already 
-    // part of the line.
-    //
-    private static List<String> BreakLineAtLineBreak(string line, bool trimLines = true)
+    /// <summary>
+    /// The function breaks the text provided in argument 'text'
+    /// at the line breaks found in that text and returns the 
+    /// result as a list of strings.
+    /// </summary>
+    /// <param name="text"></param>
+    /// <param name="keepEmptyLines"></param>
+    /// <param name="trimLines"></param>
+    /// <returns></returns>
+    public static List<String> BreakTextAtLineBreak(string text, bool keepEmptyLines = false, bool trimLines = true)
     {
       List<string> resultLines;
 
       resultLines = new List<string>();
 
-      if (line.IndexOf("\r\n") > -1)
+      if (text.IndexOf("\r\n") > -1)
       {
-        line = line.Replace("\r\n", "\r");
+        text = text.Replace("\r\n", "\r");
       }
 
-      if ((line.IndexOf("\r") > -1) || (line.IndexOf("\n") > -1))
+      if ((text.IndexOf("\r") > -1) || (text.IndexOf("\n") > -1))
       {
-        resultLines.AddRange(line.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+        if(keepEmptyLines)
+        {
+          resultLines.AddRange(text.Split(new char[] { '\r', '\n' }, StringSplitOptions.None));
+        }
+        else
+        {
+          resultLines.AddRange(text.Split(new char[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries));
+        }
       }
       else
       {
-        resultLines.Add(line);
+        resultLines.Add(text);
       }
 
       if (trimLines)
@@ -598,9 +802,9 @@ namespace CommandLineHelper
 
 
     /// <summary>
-    // Break the line at the last line break indicator at a position lower
-    // than 'maxLength' if possible. Otherwise breaks the line at 'maxLength'
-    // even if it breaks a word.
+    /// Break the line at the last line break indicator at a position lower
+    /// than 'maxLength' if possible. Otherwise breaks the line at 'maxLength'
+    /// even if it breaks a word.
     /// </summary>
     /// <param name="line"></param>
     /// <param name="maxLength"></param>

@@ -1,0 +1,159 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+<title>CommandLineHelper Assembly (version 1.0.0.0)</title>
+<meta charset="UTF-8"/>
+<link rel="stylesheet" type="text/css" href="style.css"/></head>
+<body>
+
+<h1 id="CommandLineHelper Assembly (version 1.0.0.0)">CommandLineHelper Assembly (version 1.0.0.0)</h1>
+
+<div class="block">The <code>CommandLineHelper</code> assembly exports types in the following namespaces.</div>
+
+<h2 id="CommandLineHelper Namespace">CommandLineHelper Namespace</h2>
+
+<div class="block">The <code>CommandLineHelper</code> namespace exposes the following types.</div>
+
+<h3 id="Classes">Classes</h3>
+
+<table>
+<thead>
+<tr><th>Class</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="CommandLineHelper.DefaultValueAttribute.html">DefaultValueAttribute</a></td><td>The 'DefaultValueAttribute' attribute allows to set default values for the parameter properties the attribute is attached to. <pre class="prettyprint">
+[DefaultValue((Object) 42)]
+public int NumberOfGuests
+{
+  get;
+  set;
+}
+</pre> The value of the command line argument 'DefaultValue' will be 42 even if the command line argument wasn't provided. The value in the 'DefaultValueAttribute' must be cast to an object and the base type must match with the type of the property the attribute is attached to.</td></tr>
+<tr><td><a href="CommandLineHelper.DescriptionAttribute.html">DescriptionAttribute</a></td><td>The 'DescriptionAttribute' attribute should be used to add a meaningful description to a parameter attribute and in consequence to the corresponding command line argument. The description should be shown on the command line after a help request. <pre class="prettyprint">
+[Description("The 'Email' argument value must be a valid e-mail address.")]
+public string Email
+{
+  get;
+  set;
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.HelpAttribute.html">HelpAttribute</a></td><td>The 'HelpAttribute' attribute provides information which should be shown on a help request. <pre class="prettyprint">
+[Help(@"Write any information which will help a user to understand your
+command line application. It can be anything from 'intended use',
+'examples', 'common misconceptions' or any other helpful information
+you are able to provide.")]
+class ParameterExtended : ParameterBase
+{
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.InternalAttribute.html">InternalAttribute</a></td><td>The 'InternalAttribute' attribute is a marker attribute. Every public property with a public get and set accessor of the 'ParameterBase' class or it's derived classes is considered a parameter property. Those parameter properties are subjects of the parse and validation process. Properties which have the 'InternalAttribute' attribute attached will never be processed during the parse or validation process. <pre class="prettyprint">
+[Internal]
+public int LoopCount
+{
+  get;
+  set;
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.MandatoryAttribute.html">MandatoryAttribute</a></td><td>The 'MandatoryAttribute' attribute is a marker attribute. Every parameter property which has a 'MandatoryAttribute' attribute attached will result in a mandatory command line argument. <pre class="prettyprint">
+[Mandatory]
+public int LoopCount
+{
+  get;
+  set;
+}
+</pre> A mandatory parameter property will result in a command line argument which must be provided on the command line. Missing mandatory command line arguments will result in an error message.</td></tr>
+<tr><td><a href="CommandLineHelper.MaxStringLengthAttribute.html">MaxStringLengthAttribute</a></td><td>The 'MaxStringLengthAttribute' attribute constraints the input length of the parameter property it is attached to. If the parameter property fails validation because the string length exceeded the maximum length, an error message is created which shows the provided message. <pre class="prettyprint">
+[MaxStringLength(25, "The value of 'FavoriteTVShow' must not be longer than 25 characters.")]
+public string FavoriteTVShow
+{
+  get;
+  set;
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.MaxValueAttribute.html">MaxValueAttribute</a></td><td>The 'MaxValueAttribute' attribute constraints the value of the parameter property it is attached to, to a maximum numeric value. If the parameter property fails validation because the value exceeds the maximum value, an error message is created which holds the provided message. <pre class="prettyprint">
+[MaxValue(10, "The value of 'SeatsPerCar' must be a value less or equal 10.")]
+public int SeatsPerCar
+{
+  get;
+  set;
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.MinStringLengthAttribute.html">MinStringLengthAttribute</a></td><td>The 'MinStringLengthAttribute' attribute constraints the input length of the parameter property it is attached to. If the parameter property fails validation because the string length undercut the minimum length, an error message is created which holds the provided message. <pre class="prettyprint">
+[MinStringLength(5, "The value of 'FavoriteTVShow' must at least have a length of 5 characters.")]
+public string FavoriteTVShow
+{
+  get;
+  set;
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.MinValueAttribute.html">MinValueAttribute</a></td><td>The 'MinValueAttribute' attribute constraints the value of the parameter property it is attached to, to a minimum numeric value. If the parameter property fails validation because the value undercuts the minimum value, an error message is created which holds the provided message. <pre class="prettyprint">
+[MinValue( 2, "The value of 'SeatsPerCar' must be a value greater or equal 2.")]
+public int SeatsPerCar
+{
+  get;
+  set;
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.NameAttribute.html">NameAttribute</a></td><td>The 'NameAttribute' attribute allows to change the name of a parameter attribute for it's corresponding command line argument. This way it's possible to use easy to memorize argument names on the command line which otherwis would collide with your style guide naming rules. <pre class="prettyprint">
+[Name("email")]
+public string RecipientEmailAddress
+{
+  get;
+  set;
+}
+</pre> The command line argument would be <code>email</code> and corresponding property name would be <code>RecipientEmailAddress</code>.</td></tr>
+<tr><td><a href="CommandLineHelper.ParameterAttributeBase.html">ParameterAttributeBase</a></td><td>The base class of all parameter attribute classes.</td></tr>
+<tr><td><a href="CommandLineHelper.UsageAttribute.html">UsageAttribute</a></td><td>The 'UsageAttribute' attribute provides the usage information for a given command. It should be assigned to the parameter property class. <pre class="prettyprint">
+[Usage(@"&lt;CommandName&gt; [number=&lt;Int32 number&gt;] name=&lt;String&gt;
+The 'number' value must be in the range [0..100]. The default value is 0.
+The 'name' must not be an empty string and the length must be less or equal 50.")]
+class ParameterExtended : ParameterBase
+{
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.ValidationAttributeBase.html">ValidationAttributeBase</a></td><td>The base class of all validation attributes. In order to create your own validaton attribute do the following. Create a subclass which inherits from 'ValidationAttributeBase'. Overwrite the 'Validate' function to implement your own validation logic. <p>See: <a href="CommandLineHelper.ValidationAttributeBase.Validate.html"><code>Validate(PropertyMetaInfo, ParameterBase)</code></a></p></td></tr>
+<tr><td><a href="CommandLineHelper.ValueSetAttribute.html">ValueSetAttribute</a></td><td>The 'ValueSetAttribute' attribute constraints the input of the parameter property it is attached to. Only the values which are provided in the 'ValueSetAttribute' constructor will be considered valid parameter property values during validation. Make sure the 'ValueSet' holds only objects which are assignable to the target parameter property. If you intent to combine the 'ValueSetAttribute' and the 'DefaultValueAttribute' make sure the default value is one of the elements of the 'ValueSet'. <pre class="prettyprint">
+[ValueSet(new object[] {"Left", "Right", "Top", "Down"})]
+public string NavigateDirection
+{
+  get;
+  set;
+}
+</pre></td></tr>
+<tr><td><a href="CommandLineHelper.DisplayHelper.html">DisplayHelper</a></td><td>The 'DisplayHelper' class is a reference implementation of the 'IDisplayHelper' interface. <p>The purpose of the 'DisplayHelper' class is to simplify the screen rendering. The class offers functions to create the output strings for the help screen, usage screen, the validation summary screen and the version screen.</p><p><a href="CommandLineHelper.IDisplayHelper.html"><code>IDisplayHelper</code></a></p></td></tr>
+<tr><td><a href="CommandLineHelper.ParameterBase.html">ParameterBase</a></td><td><p>The base class of all parameter classes. Implements the parse and validation function.</p> <p>In order to use the parameter class in your own code, you have to create a subclass which inherits from 'ParameterBase' and add the parameter properties which are needed in your CLI application.</p></td></tr>
+<tr><td><a href="CommandLineHelper.PropertyMetaInfo.html">PropertyMetaInfo</a></td><td>The 'PropertyMetaInfo' class is a facade class which combines the parameter property 'PropertyInfo' with an interface to access the parse and validation results as well as the attached custom attributes of a parameter property.</td></tr>
+<tr><td><a href="CommandLineHelper.ValidationError.html">ValidationError</a></td><td>The 'ValidationError' class holds a reference to the 'PropertyMetaInfo' which failed validation as well as the value which couldn't be validated and the error message.</td></tr>
+</tbody>
+</table>
+
+<h3 id="Interfaces">Interfaces</h3>
+
+<table>
+<thead>
+<tr><th>Interface</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="CommandLineHelper.IDisplayHelper.html">IDisplayHelper</a></td><td>The interface every 'DisplayHelper' class must implement in order to work with a 'ParameterProperty' class.</td></tr>
+</tbody>
+</table>
+
+<h3 id="Enumerations">Enumerations</h3>
+
+<table>
+<thead>
+<tr><th>Enumeration</th><th>Description</th></tr>
+</thead>
+<tbody>
+<tr><td><a href="CommandLineHelper.ConsoleOutputStream.html">ConsoleOutputStream</a></td><td>Enumeration of console output streams</td></tr>
+<tr><td><a href="CommandLineHelper.ParseResultEnum.html">ParseResultEnum</a></td><td>This enumeration is used to describe the result of a parse operation.</td></tr>
+</tbody>
+</table>
+
+<hr/>
+<footer>
+<em>This document is generated by <a href="https://github.com/Khojasteh/dg">DG</a>.</em>
+</footer>
+<script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js" type="text/javascript"></script>
+</body>
+</html>

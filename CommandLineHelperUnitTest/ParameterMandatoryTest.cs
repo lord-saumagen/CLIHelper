@@ -6,8 +6,15 @@ namespace CommandLineHelper
 {
   class ParameterMandatory : CommandLineHelper.ParameterBase
   {
-    [Mandatory()]
+    [Mandatory]
     public string TestStr
+    {
+      get;
+      set;
+    }
+
+    [Mandatory]
+    public int? TestNullInt
     {
       get;
       set;
@@ -17,6 +24,7 @@ namespace CommandLineHelper
     { }
 
   }// END class
+
 
   [TestClass]
   [TestCategory("ParameterMandatoryTest")]
@@ -30,17 +38,37 @@ namespace CommandLineHelper
     }
 
     [TestMethod]
-    public void ParameterMandatory_ValidationTestFail()
+    public void ParameterMandatory_ValidationFailTest()
     {
       ParameterMandatory parameterMandatory = new ParameterMandatory("ParameterMandatoryTest", Assembly.GetExecutingAssembly());
       var validationResult = parameterMandatory.Validate();
-      Assert.IsFalse(validationResult, "The validation result of 'ParameterMandatory' with an invalid 'TestStr' property should fail.");
+      Assert.IsFalse(validationResult, "The validation result of 'ParameterMandatory' with no arguments should fail.");
     }
 
     [TestMethod]
-    public void ParameterMandatory_ValidationTestPass()
+    public void ParameterMandatory_ValidationNoTestStrFailTest()
+    {
+      string[] args = new string[] { "TestNullInt=42" };
+      ParameterMandatory parameterMandatory = new ParameterMandatory("ParameterMandatoryTest", Assembly.GetExecutingAssembly());
+      parameterMandatory.Parse(args);
+      var validationResult = parameterMandatory.Validate();
+      Assert.IsFalse(validationResult, "The validation result of 'ParameterMandatory' with a missing 'TestStr' argument should fail.");
+    }
+
+    [TestMethod]
+    public void ParameterMandatory_ValidationNoTestNullIntFailTest()
     {
       string[] args = new string[] { "TestStr=\"Test Name\"" };
+      ParameterMandatory parameterMandatory = new ParameterMandatory("ParameterMandatoryTest", Assembly.GetExecutingAssembly());
+      parameterMandatory.Parse(args);
+      var validationResult = parameterMandatory.Validate();
+      Assert.IsFalse(validationResult, "The validation result of 'ParameterMandatory' with a missing 'TestNullInt' argument should fail.");
+    }
+
+    [TestMethod]
+    public void ParameterMandatory_ValidationPassTest()
+    {
+      string[] args = new string[] { "TestStr=\"Test Name\"", "TestNullInt=42" };
       ParameterMandatory parameterMandatory = new ParameterMandatory("ParameterMandatoryTest", Assembly.GetExecutingAssembly());
       parameterMandatory.Parse(args);
       var validationResult = parameterMandatory.Validate();

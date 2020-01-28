@@ -6,6 +6,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace CommandLineHelperIntegrationTest
 {
+  
   [TestClass]
   public class HelpTest : BaseTest
   {
@@ -15,7 +16,7 @@ namespace CommandLineHelperIntegrationTest
 
 
     [TestMethod]
-    public void HelpTest_NoParameter()
+    public void Help_NoParameterTest()
     {
       string parameterObjectSource;
       List<string> parameterList;
@@ -44,6 +45,8 @@ namespace CommandLineHelperIntegrationTest
           Assert.AreNotEqual(0, processExecute.ProcessExitCode, "A help request results in a validation fail. For that reason the return value should not be 0.");
           StringAssert.Contains(processExecute.ProcessStandardOutput, "The current parameter object has no parameter property!",  "The returned string should match the expectation.");
           StringAssert.Contains(processExecute.ProcessStandardOutput, "TestCommand [help] [version]", "The returned string should match the expectation.");
+
+          Debugger.Log(1, "NoParameterTest", processExecute.ProcessStandardOutput+ "\r\n");
         }
         else
         {
@@ -58,7 +61,7 @@ namespace CommandLineHelperIntegrationTest
 
 
     [TestMethod]
-    public void HelpTest_MandatoryStringNameParameter()
+    public void Help_MandatoryStringNameParameterTest()
     {
       string parameterObjectSource;
       List<string> parameterList;
@@ -85,9 +88,12 @@ namespace CommandLineHelperIntegrationTest
           processExecute = new ProcessExecute();
           processExecute.Start(testCommandPublishDir, testCommand, new string[] { "abcde", "help" });
           Assert.AreNotEqual(0, processExecute.ProcessExitCode, "A help request results in a validation fail. For that reason the return value should not be 0.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "╔═╦═[Parameter]═╦═[Type]═╦═[Default]═╦═[Description]═══════════════════════════╗", "The returned string should show the expected message.");
+          
+          
           StringAssert.Contains(processExecute.ProcessStandardOutput, "║+║ source      ║ String ║           ║ source<String>                          ║", "The returned string should show the expected message.");
           StringAssert.Contains(processExecute.ProcessStandardOutput, "TestCommand [help] [version] source=<String>","The returned string should show the expected message.");
+
+          Debugger.Log(1, "MandatoryStringNameParameterTest", processExecute.ProcessStandardOutput+ "\r\n");
         }
         else
         {
@@ -102,7 +108,7 @@ namespace CommandLineHelperIntegrationTest
 
 
     [TestMethod]
-    public void HelpTest_DefaultDescriptionNameUInt32Parameter()
+    public void Help_DefaultDescriptionNameUInt32ParameterTest()
     {
       string parameterObjectSource;
       List<string> parameterList;
@@ -134,6 +140,8 @@ namespace CommandLineHelperIntegrationTest
           StringAssert.Contains(processExecute.ProcessStandardOutput, "║ ║             ║        ║           ║ delivery. It must be a number greater   ║", "The returned string should show the expected message."); 
           StringAssert.Contains(processExecute.ProcessStandardOutput, "║ ║             ║        ║           ║ or equal 0.                             ║", "The returned string should show the expected message.");
           StringAssert.Contains(processExecute.ProcessStandardOutput, "TestCommand [help] [version] [amount=<UInt32>]","The returned string should show the expected message.");
+
+          Debugger.Log(1, "DefaultDescriptionNameUInt32ParameterTest", processExecute.ProcessStandardOutput+ "\r\n");
         }
         else
         {

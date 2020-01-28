@@ -44,9 +44,9 @@ namespace CommandLineHelperIntegrationTest
           processExecute = new ProcessExecute();
           processExecute.Start(testCommandPublishDir, testCommand, new string[] { "number=2.5" });
           Assert.AreNotEqual(0, processExecute.ProcessExitCode, "Validation of an invalid argument should result in a return code other than 0.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "║ number     ║ The value of command line argument 'number' is invalid.         ║", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "║ number     ║ The value of command line argument 'number' is invalid.         ║", "The returned string should show the expected message.");
 
-          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessStandardOutput + "\r\n\r\n");
+          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessErrorOutput + "\r\n\r\n");
         }
         else
         {
@@ -132,10 +132,10 @@ namespace CommandLineHelperIntegrationTest
           processExecute = new ProcessExecute();
           processExecute.Start(testCommandPublishDir, testCommand, new string[] { "number=6" });
           Assert.AreNotEqual(0, processExecute.ProcessExitCode, "Validation of an invalid argument should result in a return code other than 0.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "║ number     ║ The value of command line argument 'number' is not in the set   ║", "The returned string should show the expected message.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "[5, 10, 15, 20]", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "║ number     ║ The value of command line argument 'number' is not in the set   ║", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "[5, 10, 15, 20]", "The returned string should show the expected message.");
 
-          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessStandardOutput + "\r\n\r\n");
+          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessErrorOutput + "\r\n\r\n");
         }
         else
         {
@@ -222,12 +222,12 @@ namespace CommandLineHelperIntegrationTest
           processExecute = new ProcessExecute();
           processExecute.Start(testCommandPublishDir, testCommand, new string[] {  });
           Assert.AreNotEqual(0, processExecute.ProcessExitCode, "Validation of an invalid argument should result in a return code other than 0.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "║ One ore more of the command line arguments are invalid.                      ║", "The returned string should show the expected message.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "║ number     ║ The default value for the command line argument 'number' is     ║", "The returned string should show the expected message.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "The exceptions message is", "The returned string should show the expected message.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "║            ║ String' cannot be converted to type 'System.Int32'.'            ║", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "║ One or more of the command line arguments are invalid.                       ║", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "║ number     ║ The default value for the command line argument 'number' is     ║", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "The exceptions message is", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "║            ║ String' cannot be converted to type 'System.Int32'.'            ║", "The returned string should show the expected message.");
           
-          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessStandardOutput + "\r\n\r\n");
+          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessErrorOutput + "\r\n\r\n");
         }
         else
         {
@@ -314,10 +314,10 @@ namespace CommandLineHelperIntegrationTest
           processExecute = new ProcessExecute();
           processExecute.Start(testCommandPublishDir, testCommand, new string[] {  });
           Assert.AreNotEqual(0, processExecute.ProcessExitCode, "Validation of a missing mandatory argument should result in a return code other than 0.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "║ One ore more of the command line arguments are invalid.                      ║", "The returned string should show the expected message.");
-          StringAssert.Contains(processExecute.ProcessStandardOutput, "║ number     ║ The mandatory command line argument 'number' is missing or the  ║", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "║ One or more of the command line arguments are invalid.                       ║", "The returned string should show the expected message.");
+          StringAssert.Contains(processExecute.ProcessErrorOutput, "║ number     ║ The mandatory command line argument 'number' is missing or the  ║", "The returned string should show the expected message.");
           
-          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessStandardOutput + "\r\n\r\n");
+          Debugger.Log(1, "ValidationSummaryTest", processExecute.ProcessErrorOutput + "\r\n\r\n");
         }
         else
         {

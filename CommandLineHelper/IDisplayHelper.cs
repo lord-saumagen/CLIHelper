@@ -4,12 +4,16 @@ using System.Reflection;
 namespace CommandLineHelper
 {
 
+  /// <summary>
+  /// The interface every 'DisplayHelper' class must implement
+  /// in order to work with a 'ParameterProperty' class.
+  /// </summary>
   public interface IDisplayHelper
   {
     /// <summary>
     /// Create the help for the parameter object provided in argument 
     /// 'parameterObject'. The line length of the resulting help text
-    /// will match with value provide in argument 'screenWidth'.
+    /// should match with the value provide in argument 'screenWidth'.
     /// The help is supposed to be rendered on the command line.
     /// </summary>
     /// <param name="parameterObject"></param>
@@ -24,8 +28,9 @@ namespace CommandLineHelper
     /// parameter attributes.
     /// </summary>
     /// <param name="parameterObject"></param>
+    /// <param name="screenWidth"></param>
     /// <returns>The resulting string</returns>
-    string CreateUsage(ParameterBase parameterObject);
+    string CreateUsage(ParameterBase parameterObject, int screenWidth = 80);
 
     /// <summary>
     /// Creates a summary of the validation errors of the 'ParameterBase' object 
@@ -42,7 +47,7 @@ namespace CommandLineHelper
     /// <param name="message"></param>
     /// <param name="screenWidth"></param>
     /// <returns>The resulting string</returns>
-    string CreateValidationSummary(ParameterBase parameterObject, string message = "One ore more of the command line arguments are invalid.",  int screenWidth = 80);
+    string CreateValidationSummary(ParameterBase parameterObject, string message = "One or more of the command line arguments are invalid.",  int screenWidth = 80);
 
     /// <summary>
     /// Returns the version of the provided 'commandObject' as string.
@@ -54,27 +59,10 @@ namespace CommandLineHelper
     /// <summary>
     /// Returns the version of the provided 'commandAssembly' as string.
     /// </summary>
-    /// <param name="commandObject"></param>
+    /// <param name="commandAssembly"></param>
     /// <returns>The version as string or the message: 'No version info available.'</returns>
     string CreateVersion(Assembly commandAssembly);
 
-    /// <summary>
-    /// Prints the string provided in argument 'output' to the console using
-    /// the provided background and foreground colors.
-    /// After printing the original console colors get restored.
-    /// <para>
-    ///   The default colors are:
-    /// </para>
-    /// <para>
-    ///   backgroundColor = ConsoleColor.Black
-    /// </para>
-    /// <para>
-    ///   foregroundColor = ConsoleColor.White
-    /// </para>
-    /// </summary>
-    /// <param name="output"></param>
-    /// <param name="backgroundColor"></param>
-    /// <param name="foregroundColor"></param>
-    void PrintToConsole(string output, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black );
   }// END interface
+
 }// END namespace

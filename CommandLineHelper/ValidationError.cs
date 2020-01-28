@@ -5,6 +5,12 @@ using System.Collections.Generic;
 
 namespace CommandLineHelper
 {
+  /// <summary>
+  /// The 'ValidationError' class holds a reference to the 
+  /// 'PropertyMetaInfo' which failed validation as well as
+  /// the value which couldn't be validated and the error 
+  /// message.
+  /// </summary>
   public class ValidationError
   {
     /// <summary>
@@ -39,6 +45,12 @@ namespace CommandLineHelper
       private set;
     }
 
+    /// <summary>
+    /// Constructor of the 'ValidationError' class.
+    /// </summary>
+    /// <param name="propertyMetaInfo"></param>
+    /// <param name="value"></param>
+    /// <param name="message"></param>
     public ValidationError(PropertyMetaInfo propertyMetaInfo, string value, string message)
     {
       this.PropertyMetaInfo = propertyMetaInfo;

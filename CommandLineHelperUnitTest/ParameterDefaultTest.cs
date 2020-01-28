@@ -7,21 +7,21 @@ namespace CommandLineHelper
   class ParameterDefault : CommandLineHelper.ParameterBase
   {
 
-    [DefaultValue((object)25)]
+    [DefaultValue(25)]
     public int? NumberValue
     {
       get;
       set;
     }
 
-    [DefaultValue((object)"Test Value")]
+    [DefaultValue("Test Value")]
     public string StringValue
     {
       get;
       set;
     }
 
-    [DefaultValue((object)true)]
+    [DefaultValue(true)]
     public bool? BooleanValue
     {
       get;
@@ -47,7 +47,7 @@ namespace CommandLineHelper
 
 
     [TestMethod]
-    public void ParameterDefault_ValidationTestParameterNotSet()
+    public void ParameterDefault_ParameterNotSetValidationTest()
     {
       ParameterDefault parameterDefault = new ParameterDefault("ParameterDefaultTest", Assembly.GetExecutingAssembly());
       var validationResult = parameterDefault.Validate();
@@ -75,7 +75,7 @@ namespace CommandLineHelper
 
 
     [TestMethod]
-    public void ParameterDefault_ValidationTestParameterSet()
+    public void ParameterDefault_ParameterSetValidationTest()
     {
       ParameterDefault parameterDefault = new ParameterDefault("ParameterDefaultTest", Assembly.GetExecutingAssembly());
 
@@ -107,7 +107,7 @@ namespace CommandLineHelper
 
 
     [TestMethod]
-    public void ParameterDefault_ValidationTestParameterParsed()
+    public void ParameterDefault_ParameterParsedValidationTest()
     {
       string[] args = new string[] { "NumberValue=12345", "StringValue=\"A new test string\"", "BooleanValue=true" };
       ParameterDefault parameterDefault = new ParameterDefault("ParameterDefaultTest", Assembly.GetExecutingAssembly());

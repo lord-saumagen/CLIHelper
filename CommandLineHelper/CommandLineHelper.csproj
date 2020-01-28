@@ -14,6 +14,7 @@
     </Description>
     <RepositoryUrl>Repo URL</RepositoryUrl>
     <PackageLicenseUrl>https://opensource.org/licenses/MS-PL</PackageLicenseUrl>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
 
   <!-- 

@@ -56,6 +56,15 @@ namespace CommandLineHelper
       Assert.IsFalse(validationResult, "The validation result of 'CommandLineHelper.Parameter' after parsing with a help request should be false.");
     }
 
+    [TestMethod]
+    public void ParameterBase_ProcessTest()
+    {
+      //bool validationResult;
+      ParameterBase parameter = new CommandLineHelper.ParameterBase("ParameterBaseTest", Assembly.GetExecutingAssembly(), new DisplayHelper());
+      string[] args = new string[] { "help" };
+
+      parameter.Process(args);
+    }
 
 
   }// END class

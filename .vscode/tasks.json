@@ -3,21 +3,20 @@
   "tasks": [
     {
       "label": "test_All",
-      "group": "test",
+      "group": {
+        "kind": "test",
+        "isDefault": true
+      },
       "dependsOrder": "sequence",
       "dependsOn": [
         "test_UnitTest",
         "test_IntegrationTest"
       ],
-      "presentation": {
-        "clear": true,
-        "reveal": "always",
-        "panel": "shared"
-      },
       "problemMatcher": "$msCompile"
     },
     {
       "label": "test_UnitTest",
+      "group": "test",
       "type": "process",
       "command": "dotnet",
       "args": [
@@ -26,7 +25,6 @@
         "-v",
         "normal"
       ],
-      "group": "test",
       "presentation": {
         "reveal": "always",
         "panel": "shared"
@@ -35,6 +33,7 @@
     },
     {
       "label": "test_IntegrationTest",
+      "group": "test",
       "type": "process",
       "command": "dotnet",
       "args": [
@@ -43,7 +42,6 @@
         "-v",
         "normal"
       ],
-      "group": "test",
       "presentation": {
         "reveal": "always",
         "panel": "shared"
@@ -52,29 +50,37 @@
     },
     {
       "label": "build_All",
+      "group":{
+        "kind": "build",
+        "isDefault": true
+      },
+      "type": "shell",
+      "command": "echo +++ BUILD ALL COMPLETE +++",
+      "presentation": {
+        "echo": false
+      },
       "dependsOrder": "sequence",
       "dependsOn": [
         "build_CommandLineHelper",
         "build_CommandLineHelperUnitTest",
         "build_CommandLineHelperIntegrationTest",
         "build_TestCommand",
-        "echo-complete"
+        "build_TestParseExpandedCommand",
+        "build_TestValidationExpandedCommand",
+        "build_TestScreenCreationOverrideCommand"
       ],
-      "group": "build"
     },
     {
       "label": "build_CommandLineHelper",
+      "group": "build",
       "type": "process",
       "command": "dotnet",
       "args": [
         "build",
         "${workspaceFolder}/CommandLineHelper/CommandLineHelper.csproj",
-        // Ask dotnet build to generate full paths for file names.
         "/property:GenerateFullPaths=true",
-        // Do not generate summary otherwise it leads to duplicate errors in Problems panel
-        "/consoleloggerparameters:NoSummary"
+        "/consoleloggerparameters:NoSummary",
       ],
-      "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "shared",
@@ -84,6 +90,7 @@
     },
     {
       "label": "build_CommandLineHelperUnitTest",
+      "group": "build",
       "type": "process",
       "command": "dotnet",
       "args": [
@@ -93,7 +100,6 @@
         "/consoleloggerparameters:NoSummary"
       ],
       "problemMatcher": "$msCompile",
-      "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "shared",
@@ -102,6 +108,7 @@
     },
     {
       "label": "build_CommandLineHelperIntegrationTest",
+      "group": "build",
       "type": "process",
       "command": "dotnet",
       "args": [
@@ -114,7 +121,6 @@
         "copy-files"
       ],
       "problemMatcher": "$msCompile",
-      "group": "build",
       "presentation": {
         "reveal": "always",
         "panel": "shared",
@@ -123,6 +129,7 @@
     },
     {
       "label": "build_TestCommand",
+      "group": "build",
       "type": "process",
       "command": "dotnet",
       "args": [
@@ -131,7 +138,60 @@
         "/property:GenerateFullPaths=true",
         "/consoleloggerparameters:NoSummary"
       ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build_TestParseExpandedCommand",
       "group": "build",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/TestParseExpandedCommand/TestParseExpandedCommand.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build_TestValidationExpandedCommand",
+      "group": "build",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/TestValidationExpandedCommand/TestValidationExpandedCommand.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
+      "presentation": {
+        "reveal": "always",
+        "panel": "shared",
+        "showReuseMessage": false
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "build_TestScreenCreationOverrideCommand",
+      "group": "build",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "build",
+        "${workspaceFolder}/TestScreenCreationOverrideCommand/TestScreenCreationOverrideCommand.csproj",
+        "/property:GenerateFullPaths=true",
+        "/consoleloggerparameters:NoSummary"
+      ],
       "presentation": {
         "reveal": "always",
         "panel": "shared",
@@ -141,6 +201,7 @@
     },
     {
       "label": "copy-files",
+      "group": "none",
       "windows": {
         "type": "shell",
         "command": "copy",
@@ -164,19 +225,6 @@
         "panel": "shared",
         "showReuseMessage": false
       }
-    },
-    {
-      "label": "echo-complete",
-      "type": "shell",
-      "command": "echo",
-      "args": ["+++ BUILD COMPLETE +++"],
-      "presentation": {
-        "reveal": "always",
-        "panel": "shared",
-        "echo": false,
-        "showReuseMessage": false
-      },
-      "problemMatcher": "$msCompile"
-    },
+    }
   ]
 }

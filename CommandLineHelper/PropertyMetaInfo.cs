@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 
 namespace CommandLineHelper
@@ -9,7 +10,8 @@ namespace CommandLineHelper
   /// <summary>
   /// The 'PropertyMetaInfo' class is a facade class which combines the 
   /// parameter property 'PropertyInfo' with an interface to access the
-  /// parse and validation results as well as the attached custom attributes.
+  /// parse and validation results as well as the attached custom attributes
+  /// of a parameter property.
   /// </summary>
   public class PropertyMetaInfo
   {
@@ -78,7 +80,7 @@ namespace CommandLineHelper
     /// the parameter property. Otherwise false.
     /// </summary>
     /// <value></value>
-    public bool Internal
+    public bool IsInternal
     {
       get
       {
@@ -91,7 +93,7 @@ namespace CommandLineHelper
     /// the parameter property. Otherwise false.
     /// </summary>
     /// <value></value>
-    public bool Mandatory
+    public bool IsMandatory
     {
       get
       {
@@ -115,15 +117,28 @@ namespace CommandLineHelper
 
 
     /// <summary>
-    /// Returns the 'DefaultValueAttribute.Value' of the assigned 'DefaultValueAttribute' 
-    /// attribute.
+    /// Returns the validation attributes which are attached to the property info.
+    /// That list might be empty.
+    /// </summary>
+    /// <value>List&lt;ValidationAttributeBase&gt;</value>
+    public IEnumerable<ValidationAttributeBase?> ValidationAttributeList
+    {
+      get
+      {
+        return this.PropertyInfo.GetCustomAttributes(typeof(ValidationAttributeBase)).Select(attr => attr as ValidationAttributeBase).ToList();
+      }
+    }
+
+
+    /// <summary>
+    /// Returns the 'DefaultValueAttribute.Value' of the assigned 'DefaultValueAttribute'.
     /// If no 'DefaultValueAttribute' has been assigned to the parameter property the returned
     /// value is:
     /// <para>
     /// null : for a nullable parameter property or reference parameter property.
     /// </para>
     /// <para>
-    /// default value: for a none nullable value type parameter property.
+    /// The Type default value: for a none nullable value type parameter property.
     /// </para>
     /// </summary>
     /// <value></value>
@@ -137,13 +152,13 @@ namespace CommandLineHelper
         if (this.PropertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute)) == null)
         {
           //
-          // The underlying type is not nullable.
+          // The property is not nullable.
           //
           if (Nullable.GetUnderlyingType(this.PropertyInfo.PropertyType) == null)
           {
             //
-            // The underlying type is a value type. In that case the default
-            // value will be the default value of the underlying type.
+            // The property type is a value type. In that case the default
+            // value will be the default value of the property type.
             //
             if (this.PropertyInfo.PropertyType.IsValueType)
             {
@@ -159,7 +174,7 @@ namespace CommandLineHelper
           return (this.PropertyInfo.GetCustomAttribute(typeof(DefaultValueAttribute)) as DefaultValueAttribute)?.Value;
         }
         //
-        // The underlying type is not nullable and not a value type.
+        // All other types should be objects. Return a null in that case.
         //
         return null;
       }
@@ -169,7 +184,7 @@ namespace CommandLineHelper
     /// <summary>
     /// Returns the 'DescriptionAttribute.Description' value of the applied
     /// 'DescriptionAttribute'. Returns null if there hasn't been a 'DescriptionAttribute' 
-    /// attribute applied to the parameter property. 
+    /// applied to the parameter property. 
     /// </summary>
     /// <value></value>
     public string? Description

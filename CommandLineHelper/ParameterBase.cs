@@ -8,8 +8,32 @@ using System.Collections.ObjectModel;
 namespace CommandLineHelper
 {
 
+  /// <summary>
+  /// Enumeration of console output streams
+  /// </summary>
+  public enum ConsoleOutputStream
+  {
+    /// <summary>
+    ///  Identifies the standard console output stream.
+    /// </summary>  
+    STANDARD,
+    /// <summary>
+    ///  Identifies the error console output stream.
+    /// </summary>  
+    ERROR
+  }
 
-  [Usage("Usage: 'A description of the command usage. Eg.:' command parameter=parameterValue")]
+  /// <summary>
+  /// <para>  
+  /// The base class of all parameter classes. Implements the parse and validation function. 
+  /// </para> 
+  /// <para>
+  /// In order to use the parameter class in your own code, you have to create a subclass 
+  /// which inherits from 'ParameterBase' and add the parameter properties which are needed 
+  /// in your  CLI application.
+  /// </para>
+  /// </summary>
+  [Usage("A description of the command usage should be assigned to the parameter object.\r\nE.g.: command [help] [version] parameter=<parameterValue> ...")]
   public class ParameterBase
   {
     private IDisplayHelper? DisplayHelper
@@ -67,7 +91,7 @@ namespace CommandLineHelper
           return true;
         }
 
-        if(this.IsVersionRequest)
+        if (this.IsVersionRequest)
         {
           return true;
         }
@@ -120,7 +144,9 @@ namespace CommandLineHelper
     }
 
     /// <summary>
-    /// The command name as used on the command line interface.
+    /// The command name as used on the command line interface. That might not 
+    /// necessarily be the same as your program name. The 'CommandName' is set
+    /// in the constructor of the parameter class.
     /// </summary>
     /// <value></value>
     public String CommandName
@@ -130,7 +156,8 @@ namespace CommandLineHelper
     }
 
     /// <summary>
-    /// The assembly of the attached command.
+    /// The assembly of the attached command. The 'CommandAssembly' is set in the
+    /// constructor of the parameter class.
     /// </summary>
     /// <value></value>
     public Assembly CommandAssembly
@@ -150,17 +177,6 @@ namespace CommandLineHelper
     /// which are considered a version request when detected during parse.
     /// </summary>
     public List<string> VersionIndicatorList = new List<string> { "version", "/version", "-version", "--version" };
-
-    /// <summary>
-    /// The constructor of the 'ParameterBase' class. 
-    /// </summary>
-    /// <param name="commandName">The command as used on the command line.</param>
-    /// 
-    /// <exception cref="System.ArgumentException"></exception>
-    /// 
-    /// 
-    
-
 
     /// <summary>
     /// The constructor of the 'ParameterBase' class. 
@@ -187,7 +203,6 @@ namespace CommandLineHelper
 
       this.DisplayHelper = displayHelper;
 
-
       //
       // Fill the 'PropertyMetaInfoList' with each property that qualifies as 
       // parameter property and isn't marked as internal.
@@ -197,7 +212,7 @@ namespace CommandLineHelper
       .Where(prop => prop.GetGetMethod() != null)
       .Where(prop => prop.GetSetMethod() != null)
       .Select(prop => new PropertyMetaInfo(prop))
-      .Where(propMetaInfo => !propMetaInfo.Internal).ToList();
+      .Where(propMetaInfo => !propMetaInfo.IsInternal).ToList();
     }
 
 
@@ -206,49 +221,36 @@ namespace CommandLineHelper
     /// function. 
     /// <para>
     /// If the 'showUsageOnEmptyArgs' argument is true and the 'args' 
-    /// argument is null or empty, the usage will be displayed and the 
-    /// return value will be false;
+    /// argument has no argument which qualifies as parameter argument, 
+    /// the usage screen will be rendered to the console error stream
+    /// and the return value will be false;
     /// </para>
     /// <para>
     /// If the validation fails because it was a help request, the
-    /// help will be displayed and the return value will be false.
+    /// help screen will be rendered to the console standard stream
+    /// and the return value will be false.
     /// </para>
     /// <para>
     /// If the validation fails because it was a version request, the
-    /// version will be displayed and the return value will be false.
+    /// version screen will be rendered to the console standard stream
+    /// and the return value will be false.
     /// </para>
     /// <para>
     /// If the validation fails because of invalid arguments, the
-    /// validation summary will be displayed and the return value 
-    /// will be false.
+    /// validation summary screen will be rendered to the console error
+    /// stream the return value will be false.
     /// </para>
     /// <para>
-    /// The function returns true if the process was successful.
+    /// The function returns true if the process was successful and 
+    /// no screen was rendered.
     /// </para>
     /// </summary>
     /// <param name="args">
     /// The command line arguments which will be processed.
     /// </param>
     /// <param name="showUsageOnEmptyArgs">
-    /// Determines the handling of an empty or null 'args' argument. 
-    /// An empty 'args' argument is not necessarily wrong. 
-    ///
-    /// If the flag is set to true, an empty 'args' argument will result 
-    /// in the  display of the usage string and the return value will be false.
-    ///
-    ///
-    /// If the flag is set to false, the program flow will be the same
-    /// as it is with a none empty 'args' argument.
-    /// That means error reset, parse result reset and validating and the
-    /// return value will be the validation result.
-    ///
-    ///
-    /// If you create one or more optional parameter where some have
-    /// default values set the flag to false. (An empty 'args' argument
-    /// is not necessarily an invalid command input.)
-    /// If you create some mandatory parameter set the flag to true.
-    /// (An empty 'args' argument can never be valid.)
-    ///
+    /// Determines whether the usage screen will be rendered if the 
+    /// args array has no argument which qualifies as parameter argument.
     /// </param>
     /// <returns>true, if the process succeeded, otherwise false</returns>
     public virtual bool Process(String[] args, bool showUsageOnEmptyArgs = true)
@@ -256,44 +258,85 @@ namespace CommandLineHelper
       bool IsValid;
       string output;
 
-      if (showUsageOnEmptyArgs && ((args == null) || (args.Length == 0)))
+      this.Parse(args);
+
+      //
+      // The usage screen will be rendered to the 
+      // console error stream.
+      //
+      if (showUsageOnEmptyArgs && this.Arguments.Count() == 0)
       {
         output = this.CreateUsage();
-        Console.Write(output);
+        ParameterBase.PrintToConsole(output, consoleOutputStream : ConsoleOutputStream.ERROR);
         return false;
       }
-      else
+
+      IsValid = this.Validate();
+
+      if (!IsValid)
       {
-        this.Parse(args);
-        IsValid = this.Validate();
-        if (!IsValid)
+        if (this.IsHelpRequest)
         {
-          if (this.IsHelpRequest)
-          {
-            output = this.CreateHelp();
-            Console.Write(output);
-            return IsValid;
-          }
-          if (this.IsVersionRequest)
-          {
-            output = this.CreateVersion(this);
-            Console.Write(output);
-            return IsValid;
-          }
-          output = this.CreateValidationSummary();
-          this.PrintToConsole(output, ConsoleColor.Red);
+          output = this.CreateHelp();
+          Console.Write(output);
           return IsValid;
         }
+        if (this.IsVersionRequest)
+        {
+          output = this.CreateVersion(this);
+          Console.Write(output);
+          return IsValid;
+        }
+        output = this.CreateValidationSummary();
+        //ParameterBase.PrintToConsole(output, ConsoleColor.Red);
+
+        //
+        // The validation summary screen will be rendered to the 
+        // console error stream.
+        //
+        ParameterBase.PrintToConsole(output, consoleOutputStream: ConsoleOutputStream.ERROR, foregroundColor: ConsoleColor.Red);
         return IsValid;
       }
+      return IsValid;
     }
 
     /// <summary>
     /// Parses the arguments provided in argument 'args' and assigns the
-    /// values of those arguments which have corresponding parameter 
-    /// properties to the properties.
+    /// values of those arguments, which have corresponding parameter 
+    /// properties, to the properties.
+    /// <param>
+    /// The parse function handles the parsing for the following 
+    /// types only:
+    /// </param>
+    /// <list type="table">  
+    ///   <listheader>  
+    ///     <term>Type</term>
+    ///     <description>Description</description>  
+    ///   </listheader>  
+    ///   <item>  
+    ///     <term>Boolean &amp; Boolean?</term>
+    ///     <description>Parses the strings: true, false, yes, no. (Not case sensitive)</description>  
+    ///   </item>  
+    ///   <item>
+    ///     <term>Char &amp; Char?</term>
+    ///     <description>Parses a single character</description>
+    ///   </item>
+    ///   <item>  
+    ///     <term>Number types &amp; nullable number types</term>
+    ///     <description>Parses number strings for the types: 
+    ///      Int16, UInt16, Int32, UInt32, Int64, UInt64, Single, Double, Decimal and their 
+    ///      nullable counterparts.
+    ///    </description>  
+    ///   </item>  
+    ///    <item>String</item>
+    ///    <descriptions>Any given string.</descriptions>
+    ///   </list>  
     /// </summary>
     /// <param name="args"></param>
+    /// <para>
+    /// If you need parse support for other types, override the 'Parse'
+    /// function in your subclass and add the required parse logic.
+    /// </para>
     public virtual void Parse(string[] args)
     {
       Type parameterType;
@@ -384,7 +427,6 @@ namespace CommandLineHelper
 
         if (!String.IsNullOrWhiteSpace(value))
         {
-
           try
           {
             switch (item.Type)
@@ -495,6 +537,10 @@ namespace CommandLineHelper
                 }
               default:
                 {
+                  //
+                  // Parsing failed because the type isn't supported.
+                  //
+                  item.ParseResult = ParseResultEnum.PARSE_FAILED;
                   break;
                 }
             }
@@ -549,7 +595,7 @@ namespace CommandLineHelper
     /// 'ParameterBase' class and returns true if the validation
     /// for all properties succeeded, otherwise false.
     /// </summary>
-    /// <returns></returns>
+    /// <returns>Returns true if the validation passed, otherwise false.</returns>
     public virtual bool Validate()
     {
       //
@@ -594,13 +640,12 @@ namespace CommandLineHelper
     /// Validates a single parameter property.
     /// </summary>
     /// <param name="propertyMetaInfo"></param>
-    /// <returns></returns>
     private void ValidateProperty(PropertyMetaInfo propertyMetaInfo)
     {
       //
       // The argument is mandatory
       //
-      if (propertyMetaInfo.Mandatory)
+      if (propertyMetaInfo.IsMandatory)
       {
         //
         // Parsing failed because the argument was missing.
@@ -735,16 +780,14 @@ namespace CommandLineHelper
           if (!compareSet.Contains((propertyMetaInfo.PropertyInfo.GetValue(this) as String).ToLower()))
           {
 #pragma warning restore CS8602
-            string errorString = $"The value of command line argument '{propertyMetaInfo.Name}' is not in the set of allowed values.\r\nAllowd values are:\r\n[";
-            foreach(var item in compareSet)
+            string errorString = $"The value of command line argument '{propertyMetaInfo.Name}' is not in the set of allowed values.\r\nAllowed values are:\r\n[";
+            foreach (var item in compareSet)
             {
               errorString += item.ToString() + ", ";
             }
-            errorString = errorString.TrimEnd(new char[] {',',' '});
+            errorString = errorString.TrimEnd(new char[] { ',', ' ' });
             errorString += "]";
             propertyMetaInfo.ValidationError = new ValidationError(propertyMetaInfo, "", errorString);
-
-            //propertyMetaInfo.ValidationError = new ValidationError(propertyMetaInfo, "", $"The value of command line argument '{propertyMetaInfo.Name}' is not in the set of allowed values.");
             return;
           }
         }
@@ -756,20 +799,88 @@ namespace CommandLineHelper
 #pragma warning disable CS8604
           if (!compareSet.Contains(propertyMetaInfo.PropertyInfo.GetValue(this)))
           {
-            string errorString = $"The value of command line argument '{propertyMetaInfo.Name}' is not in the set of allowed values.\r\nAllowd values are:\r\n[";
-            foreach(var item in compareSet)
+            string errorString = $"The value of command line argument '{propertyMetaInfo.Name}' is not in the set of allowed values.\r\nAllowed values are:\r\n[";
+            foreach (var item in compareSet)
             {
               errorString += item.ToString() + ", ";
             }
-            errorString = errorString.TrimEnd(new char[] {',',' '});
+            errorString = errorString.TrimEnd(new char[] { ',', ' ' });
             errorString += "]";
             propertyMetaInfo.ValidationError = new ValidationError(propertyMetaInfo, "", errorString);
-
-            //propertyMetaInfo.ValidationError = new ValidationError(propertyMetaInfo, "", $"The value of command line argument '{propertyMetaInfo.Name}' is not in the set of allowed values.");
             return;
           }
 #pragma warning restore CS8604
         }
+      }
+
+      //
+      // Check all validaton attributes
+      //
+      foreach (ValidationAttributeBase? validationAttribute in propertyMetaInfo.ValidationAttributeList)
+      {
+        if (validationAttribute != null)
+        {
+          validationAttribute.Validate(propertyMetaInfo, this);
+          if (propertyMetaInfo.ValidationError != null)
+          {
+            //
+            // Stop execution on the first validation error.
+            //
+            return;
+          }
+        }
+      }
+    }
+
+
+    /// <summary>
+    /// The function will write the provided 'output' to the
+    /// specified console stream using the provided 'foregroundColor' and 
+    /// 'backgroundColor'. 
+    /// After printing the original console colors get restored.
+    /// <para>
+    ///   The default colors are:
+    /// </para>
+    /// <para>
+    ///   The output stream to use. Default is the 
+    ///   standard output.
+    /// </para>
+    /// <para>
+    ///   The backgroundColor default is ConsoleColor.Black.
+    /// </para>
+    /// <para>
+    ///   The foregroundColor default is ConsoleColor.White.
+    /// </para>
+    /// </summary>
+    /// <param name="output"></param>
+    /// <param name="consoleOutputStream">The output stream to use. Default is the ConsoleOutputStream.STANDARD.</param>
+    /// <param name="foregroundColor"></param>
+    /// <param name="backgroundColor"></param>
+    public static void PrintToConsole(string output, ConsoleOutputStream consoleOutputStream = ConsoleOutputStream.STANDARD, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
+    {
+      ConsoleColor savedBackgroundColor;
+      ConsoleColor savedForegroundColor;
+
+      if (!String.IsNullOrWhiteSpace(output))
+      {
+        savedBackgroundColor = Console.BackgroundColor;
+        savedForegroundColor = Console.ForegroundColor;
+
+        Console.ForegroundColor = foregroundColor;
+        Console.BackgroundColor = backgroundColor;
+
+        if(consoleOutputStream == ConsoleOutputStream.STANDARD)
+        {
+          Console.Write(output);
+        }
+        else
+        {
+          Console.Error.Write(output);
+          Console.Error.Flush();
+        }
+
+        Console.BackgroundColor = savedBackgroundColor;
+        Console.ForegroundColor = savedForegroundColor;
       }
     }
 
@@ -780,10 +891,8 @@ namespace CommandLineHelper
 
     /// <summary>
     /// If a 'DisplayHelper' was provided during construction,
-    /// the help text for this parameter object will be created.
+    /// the help screen for this parameter object will be created.
     /// Otherwise an empty string will be returned.
-    /// The line length of the resulting help text
-    /// will match with value provide in argument 'screenWidth'.
     /// </summary>
     /// <param name="screenWidth"></param>
     /// <returns>The resulting string</returns>
@@ -798,11 +907,8 @@ namespace CommandLineHelper
 
     /// <summary>
     /// If a 'DisplayHelper' was provided during construction,
-    /// a usage description for this parameter object will be created.
+    /// a usage screen for this parameter object will be created.
     /// Otherwise an empty string will be returned.
-    /// The usage description is either the one provided with
-    /// the 'UsageAttribute' or a generic description created from the known 
-    /// parameter attributes.
     /// </summary>
     /// <returns>The resulting string</returns>
     public virtual string CreateUsage()
@@ -816,7 +922,7 @@ namespace CommandLineHelper
 
     /// <summary>
     /// If a 'DisplayHelper' was provided during construction,
-    /// a validation summary for this parameter object will be created.
+    /// a validation summary screen for this parameter object will be created.
     /// Otherwise an empty string will be returned.
     /// <para>
     /// The message provided in argument 'message' will be shown on top of the summary.
@@ -839,7 +945,7 @@ namespace CommandLineHelper
 
     /// <summary>
     /// If a 'DisplayHelper' was provided during construction,
-    /// a validation summary for this parameter object will be created.
+    /// a validation summary screen for this parameter object will be created.
     /// Otherwise an empty string will be returned.
     /// <para>
     /// The message provided in argument 'message' will be shown on top of the summary.
@@ -869,7 +975,7 @@ namespace CommandLineHelper
 
     /// <summary>
     /// If a 'DisplayHelper' was provided during construction,
-    /// a version of the provided 'commandObject' will be created.
+    /// a version screen for the provided 'commandObject' will be returned.
     /// Otherwise an empty string will be returned.
     /// <para>
     /// The command object should be the command line program who's version should be displayed.
@@ -888,54 +994,22 @@ namespace CommandLineHelper
 
     /// <summary>
     /// If a 'DisplayHelper' was provided during construction,
-    /// a version of the provided 'commandObjectAssembly' will be created.
+    /// a version screen for the provided 'commandAssembly' will be returned.
     /// Otherwise an empty string will be returned.
     /// <para>
     /// The command object should be the command line program who's version should be displayed.
     /// </para>
     /// </summary>
-    /// <param name="commandObjectAssembly"></param>
+    /// <param name="commandAssembly"></param>
     /// <returns>The version as string or the message: 'No version info available.'</returns>
-    public virtual string CreateVersion(Assembly commandObjectAssembly)
+    public virtual string CreateVersion(Assembly commandAssembly)
     {
       if (this.DisplayHelper != null)
       {
-        return this.DisplayHelper.CreateVersion(commandObjectAssembly);
+        return this.DisplayHelper.CreateVersion(commandAssembly);
       }
       return string.Empty;
     }
-
-    /// <summary>
-    /// If a 'DisplayHelper' was provided during construction,
-    /// the function will write the provided 'output' to the
-    /// console using the provided 'foregroundColor' and 
-    /// 'backgroundColor'. Otherwise a simple 'Console.Write'
-    /// will be executed.
-    /// After printing the original console colors get restored.
-    /// <para>
-    ///   The default colors are:
-    /// </para>
-    /// <para>
-    ///   backgroundColor = ConsoleColor.Black
-    /// </para>
-    /// <para>
-    ///   foregroundColor = ConsoleColor.White
-    /// </para>
-    /// </summary>
-    /// <param name="output"></param>
-    /// <param name="foregroundColor"></param>
-     /// <param name="backgroundColor"></param>
-   public virtual void PrintToConsole(string output, ConsoleColor foregroundColor = ConsoleColor.White, ConsoleColor backgroundColor = ConsoleColor.Black)
-   {
-      if (this.DisplayHelper != null)
-      {
-         this.DisplayHelper.PrintToConsole(output, foregroundColor, backgroundColor);
-      }
-      else
-      {
-        Console.Write(output);
-      }
-   }
 
   }// END class
 }// END namespace

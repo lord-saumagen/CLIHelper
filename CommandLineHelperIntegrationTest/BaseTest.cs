@@ -58,72 +58,40 @@ namespace CommandLineHelperIntegrationTest
     {
       string result;
 
+      //
+      // Create the import list,
+      // the namespace ant the 
+      // beginning of the class 
+      // definition
+      //
       result = string.Empty;
       result += parameterObjectTop;
+
+      //
+      // Add the property definitions
+      // according to the 'parameterList'.
+      //
       result += "\r\n\r\n";
       result += String.Join("\r\n", parameterList);
       result += "\r\n\r\n";
+
+      //
+      // Add the constructor. 
+      // Close the class definition
+      // and close the namespace.
+      //
       result += parameterObjectBottom;
+
+      //
+      // If a 'usage' string was provided
+      // replace the "UsageAttribute' comment
+      // with the 'UsageAttribute".
+      //
       if (!String.IsNullOrWhiteSpace(usage))
       {
         result = result.Replace("//UsageAttribute", "[Usage(\"" + usage + "\")]");
       }
       return result;
-    }
-
-
-    protected void SetTestCommandShowUsageExplicit()
-    {
-      string testCommandSource;
-      List<string> testCommandSourceLines;
-      string processLine;
-      int processLineIndex;
-      string testCommandSourcePath;
-      string testCommandTargetPath;
-
-
-      testCommandSourcePath = Path.Combine(testCommandProjectDir, testCommand + ".cs.txt");
-      testCommandTargetPath = testCommandSourcePath.Replace(".txt","");
-
-      using (var stream = System.IO.File.OpenRead(testCommandSourcePath))
-      {
-        using (var strReader = new StreamReader(stream))
-        {
-          testCommandSource = strReader.ReadToEnd();
-        }
-      }
-
-      testCommandSource = testCommandSource.Replace("\r","");
-      testCommandSourceLines = testCommandSource.Split("\n", StringSplitOptions.None).ToList();
-
-      processLineIndex = testCommandSourceLines.FindIndex(0, (line) =>  
-                         { 
-                           return line.IndexOf("IsValid = parameterObject.Process") > -1;
-                         });
-
-      processLine = testCommandSourceLines[processLineIndex];
-
-      if(processLine != null)
-      {
-        processLine = $"      IsValid = parameterObject.Process(args, showUsageOnEmptyArgs : false);";
-        testCommandSourceLines[processLineIndex] = processLine;
-      }
-
-      testCommandSourceLines.Insert(processLineIndex + 1, "      Console.Write(parameterObject.CreateUsage());");
-
-      testCommandSource = String.Join("\r\n",testCommandSourceLines);
-
-      System.IO.File.Delete(testCommandTargetPath);
-
-      using (var stream = System.IO.File.OpenWrite(testCommandTargetPath))
-      {
-        using (var strWriter = new StreamWriter(stream))
-        {
-          strWriter.Write(testCommandSource);
-          stream.Flush();
-          strWriter.Close();
-        }
-      }
     }
 
 
