@@ -251,7 +251,7 @@ Let's have a quick look at the 'help' and the 'version' screen. Run the program 
 
 ![BasicHelp](./CommandLineHelper/docs/images/BasicHelp.png "Help screen")
 
-The help screen shows a generic help in the upper part and the usage screen in the lower part. The generic help lists all arguments, their type and if available their default value. If the parameter property has a [DescriptionAttribute](./CommandLineHelper/docs/html/CommandLineHelper.DescriptionAttribute.html) attached, that description will be displayed in the 'Description' column. Otherwise it's simply the name and the type.
+The help screen shows a generic help in the upper part and the usage screen in the lower part. The generic help lists all arguments, their type and if available their default value. If the parameter property has a [DescriptionAttribute](./CommandLineHelper/docs/markdown/CommandLineHelper.DescriptionAttribute.md) attached, that description will be displayed in the 'Description' column. Otherwise it's simply the name and the type.
 
 Run the program and add the 'version' argument to render the version screen. The screen looks like:
 
