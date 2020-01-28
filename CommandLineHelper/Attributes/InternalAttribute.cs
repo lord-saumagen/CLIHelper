@@ -26,7 +26,7 @@ namespace CommandLineHelper
     /// <summary>
     /// Constructor of the 'InternalAttribute' class.
     /// </summary>
-    public InternalAttribute()
+    public InternalAttribute() : base()
     {
     }
     

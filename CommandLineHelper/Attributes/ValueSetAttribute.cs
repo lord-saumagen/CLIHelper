@@ -50,7 +50,7 @@ namespace CommandLineHelper
     /// Constructor of the 'ValueSetAttribute' class.
     /// </summary>
     /// <param name="valueSet">A list of objects which form the value set.</param>
-    public ValueSetAttribute(List<Object> valueSet)
+    public ValueSetAttribute(List<Object> valueSet) : base()
     {
        MethodBase? methodBase = MethodBase.GetCurrentMethod();
 
@@ -65,7 +65,7 @@ namespace CommandLineHelper
     /// Constructor of the 'ValueSetAttribute' class.
     /// </summary>
     /// <param name="valueSet">An array of objects which form the value set.</param>
-    public ValueSetAttribute(Object[] valueSet)
+    public ValueSetAttribute(Object[] valueSet) : base()
     {
       MethodBase? methodBase = MethodBase.GetCurrentMethod();
 

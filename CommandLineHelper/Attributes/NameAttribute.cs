@@ -38,7 +38,7 @@ namespace CommandLineHelper
     /// Constructor of the 'NameAttribute' class
     /// </summary>
     /// <param name="name"></param>
-    public NameAttribute(string name)
+    public NameAttribute(string name) : base()
     {
       this.Name = name;
     }

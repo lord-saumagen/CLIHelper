@@ -27,7 +27,7 @@ namespace CommandLineHelper
     /// <summary>
     /// Constructor of the 'MandatoryAttribute' class.
     /// </summary>
-    public MandatoryAttribute()
+    public MandatoryAttribute() : base()
     {
     }
 

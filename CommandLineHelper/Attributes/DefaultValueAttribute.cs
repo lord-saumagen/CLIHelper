@@ -42,7 +42,7 @@ namespace CommandLineHelper
     /// Constructor of the 'DefaultValueAttribute' class.
     /// </summary>
     /// <param name="value"></param>
-    public DefaultValueAttribute(Object value)
+    public DefaultValueAttribute(Object value) : base()
     {
       this.Value = value;
     }

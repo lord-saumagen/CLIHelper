@@ -1204,7 +1204,7 @@ I guess you would simply invent some name for those objects, like
 
 ***U***nnamed ***F***ixplaced ***O***bjects, for example.
 
-If you have come this far, you should have a good understanding why this command line interpreter library is designed the way it is, by now. My design decisions are the result of my (mostly bad) experiences with command line programs in my past. The myriad of badly designed command line programs are the result of ancient and stupid conventions which don't make any sense at this time. Unfortunately there is no visible effort among programmers to change that situation. If you are also a believer of the ancient rules, I'm sorry to tell you that you have come to the wrong place. If you think my design decision weren't that bad, I'm glad to have you on my side. Please spread the word and make heavy use of this library. There is no chance that the world will become a better place, but at least command line programs might improve.
+If you have come this far, you should have a good understanding why this command line interpreter library is designed the way it is, by now. My design decisions are the result of my (mostly bad) experiences with command line programs in my past. The myriad of badly designed command line programs are the result of ancient and stupid conventions which don't make any sense at this time. Unfortunately there is no visible effort among programmers to change that situation. If you are also a believer of the ancient rules, I'm sorry to tell you that you have come to the wrong place. If you think my design decision weren't that bad, I'm glad to have you on my side. Please spread the word and make heavy use of this library.
 
 ## Licensing
 

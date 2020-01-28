@@ -36,7 +36,7 @@ namespace CommandLineHelper
     /// Constructor of the 'DescriptionAttribute' class.
     /// </summary>
     /// <param name="description"></param>
-    public DescriptionAttribute(string description)
+    public DescriptionAttribute(string description) : base()
     {
       this.Description = description;
     }
