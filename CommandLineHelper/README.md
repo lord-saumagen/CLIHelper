@@ -1047,9 +1047,9 @@ The command line arguments have to follow the following rule in oder to be recog
 
 There is no whitespace allowed between the argument name, the equal sign and the argument value. Argument values which include spaces must be enclosed in double quotes.
 
-Command line arguments which don't follow that rule are ignored but not considered an invalid input.
+Command line arguments which don't follow that rule are ignored but they are not considered an invalid input.
 
-The command line interpreter is not case sensitive. That means the interpreter doesn't distinguish between upper case or lower case characters in a command name.
+The command line interpreter is not case sensitive. That means the interpreter doesn't distinguish between upper case or lower case characters in a command line argument names.
 
 Since all arguments are named arguments per definition, the order of the arguments on the command line is not important. Command line arguments may appear in any arbitrary order.
 
@@ -1059,7 +1059,7 @@ The command line interpreter renders the 'ValidationSummary' screen and the 'Usa
 
 The library supports the following data types:
 
-1) **Boolean**, which can have an assigned value of 'true|yes' or 'false|no'.
+1) **Boolean**, which can have an assigned value of 'true | yes' or 'false | no'.
 
 2) **Char**, which can have any single character assigned.
 
@@ -1099,7 +1099,7 @@ The short answer is, there is no standard. You might argue that there is at leas
 [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html#tag_12_02) convention and also a [GNU getopt](http://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html) convention. But that's where the problems begin. First of all, those standards are not compatible. Second, they are only used (if at all) on Unix / Linux systems. And third, they are remnants from an ancient computer history from before the late '70s.  
 Not everything invented in the '70s is bad. (Funk for example) When the CLI was invented, it was supposed to be used on terminals which very much looked like old mechanical typewriters. Most computers didn't have a screen at that time and the output was send to a plotter. There might have been good reasons to follow the previous mentioned conventions at that time, but I can't think of any reason why that conventions should be used till the end of time even if you know how to do better.
 
-So, what is wrong with this conventions?
+So, what is wrong with these conventions?
 
 Those conventions were invented at a time where all computer users where supposed to be experts in computer science. Computer only existed in universities, research center, and in some military installations. But today the picture is totally different. Computer are used everywhere. The number of available CLI programs also changed. A Unix system in the late '70s offered around 200 commands. Today even a basic installation offers easily 1000 commands.  
 How does that fit to the computer skills you can expect from an averaged user?  
@@ -1190,7 +1190,7 @@ Enter the first two character of the ```grub``` command and hit the [TAB] key tw
 
 After that you could go on typing and hit the [TAB] key again to narrow down the selection, or you keep on typing until there is only one possible selection left and hit the [TAB] key to complete the command. That is the fastest way to navigate through the myriads of commands on the command line with minimal typing effort. I entered only two characters on the command line and hit the [TAB] key to got a complete list of available ```grub``` commands. Now take a look at the ```dotnet``` command. You might guess that there should be a build or run command, but there is no way to get that information without calling the ```dotnet``` command with the help parameter set in the first place. Than you get the list of available sub-commands but you need to call the ```dotnet sub-command``` help a second time to learn about the sub-command parameter.
 
-Do you see what happened?
+Did you see what happened?
 
 By adding sub-commands to the ```dotnet``` command, the user is forced to switch to a different navigation, implemented by the command. The user also loses the command expansion. 
 That is annoying on the first hand and increases the rate of typos on the other hand. I can't see the benefit of that design pattern. I don't care if there are 2000 or 10000 commands available at the command line. As long as I only have to type 2 or 3 characters to narrow them down to the command I'm looking for. But thats not longer possible if you hide the commands from the command line and implement them as sub-commands. It would be easy to implement the ```dotnet``` sub-commands as normal commands. Their names would be 'dotnet-run', 'dotnet-build', 'dotnet-watch', ... and so on. The command names are longer, but as long as command expansion does the typing for me I really don't care.
@@ -1219,7 +1219,7 @@ If you have come this far, you should have a good understanding why this command
 
 This project is licensed under the Microsoft Public License.
 
-See [(MS-PL)]([LICENSE](https://opensource.org/licenses/MS-PL)) for more information.
+See [(MS-PL)](https://opensource.org/licenses/MS-PL) for more information.
 
 ## Glossary
 
