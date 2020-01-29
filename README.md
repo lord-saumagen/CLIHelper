@@ -82,7 +82,7 @@ So I decided to crate my own solution and follow my own rules which are:
 Add the nuget package to your project using the following command:
 
 ```bash
-paket add CommandLineHelper --version 1.0.0
+dotnet add package CommandLineHelper
 ```
 
 Add a *'using'* statement to your code file:
