@@ -264,7 +264,7 @@ namespace CommandLineHelper
       // The usage screen will be rendered to the 
       // console error stream.
       //
-      if (showUsageOnEmptyArgs && this.Arguments.Count() == 0)
+      if (!this.IsHelpRequest && !this.IsVersionRequest && showUsageOnEmptyArgs && this.Arguments.Count() == 0)
       {
         output = this.CreateUsage();
         ParameterBase.PrintToConsole(output, consoleOutputStream : ConsoleOutputStream.ERROR);

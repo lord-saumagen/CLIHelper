@@ -1226,6 +1226,8 @@ See [(MS-PL)]([LICENSE](https://opensource.org/licenses/MS-PL)) for more informa
 
 Version 1.0.1: Fixed a bug in the string parser which let the parser fail when the value of a string parameter contained a '=' char.
 
+Version 1.0.2: Fixed the disabled help screen.
+
 ## Glossary
 
 | Term  | Description |

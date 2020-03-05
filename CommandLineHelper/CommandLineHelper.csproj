@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Nullable>enable</Nullable>
-    <AssemblyVersion>1.0.1</AssemblyVersion>
-    <Version>1.0.1</Version>
+    <AssemblyVersion>1.0.2</AssemblyVersion>
+    <Version>1.0.2</Version>
     <Authors>Lord Saumagen (Lord.Saumagen@outlook.com)</Authors>
     <Company>Private</Company>
     <NeutralLanguage>en</NeutralLanguage>
