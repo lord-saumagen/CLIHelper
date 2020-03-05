@@ -27,6 +27,7 @@ the [CLI](#CLI) interfaces on windows and linux systems.
     - [Class documentation](#class-documentation)
     - [Design decisions](#design-decisions)
   - [Licensing](#licensing)
+  - [Release note](#release-note)
   - [Glossary](#glossary)
 
 ## Motivation
@@ -117,7 +118,7 @@ dotnet test
 dotnet add reference <Path to the 'CommandLineHelper' project>
 ```
 
-The repository at https://github.com/lord-saumagen/CLIHelper.git is a multi project solution. Since github doesn't support multi project solutions, the sub-projects are simply directories below the *'CLIHelper'* directory.  
+The repository at https://github.com/lord-saumagen/CLIHelper.git is a multi project solution. Since github doesn't support multi project solutions, the sub-projects are simply directories below the *'CLIHelp'* directory.  
 The *'CLIHelper'* directory hosts the solution file for this multi project solution. (Blue)  
 The *'CommandLineHelper'* directory is the director which hosts the library implementation. (Black)  
 The *'CommandLineHelperUnitTest'* directory hosts the unit tests. (Orange)  
@@ -684,7 +685,7 @@ Since the shell already provides the tokenized form of the command line argument
 
 Every character or character group which is separated from the neighboring characters by white space is a token.  
 
-That is the reason why I declared the rule that every command line argument must have the form **'ArgumentName'='ArgumentValue'**. Since there is no space allowed between the argument name, the equal sign and the argument value, the whole expression is identified as one token. That makes it easy to process the command line arguments. I only have to split the token at the equal sign and know that the first part is the name of the command line argument and the second part the value. I don't have to look for dash or double dash or slash prefixes to identify the argument name. I also don't have to worry about arguments which are named but doesn't have a value assigned. Another advantage is the fact that I don't have to worry about positional arguments. Since all arguments are named arguments, they might appear in any possible order on the command line.  
+That is the reason why I declared the rule that every command line argument must have the form **'ArgumentName'='ArgumentValue'**. Since there is no space allowed between the argument name, the equal sign and the argument value, the whole expression is identified as one token. That makes it easy to process the command line arguments. I only have to split the token at the equal sign and know that the first part is the name of the command line argument and the second part the value. I don't have to look for dash or double dash or slash prefixes to identify the argument name. I also don't have to worry about arguments which are named but doesn't have a value assigned. Another advantage is the fact that I don't have to worry about positional arguments. Since all arguments are name arguments, they might appear in any possible order on the command line.  
 
 That leaves the parsing and validation part to implement. As you might guess there is a [Parse](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.Parse.md) and a [Validate](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.Validate.md) function implemented.
 
@@ -1047,9 +1048,9 @@ The command line arguments have to follow the following rule in oder to be recog
 
 There is no whitespace allowed between the argument name, the equal sign and the argument value. Argument values which include spaces must be enclosed in double quotes.
 
-Command line arguments which don't follow that rule are ignored but they are not considered an invalid input.
+Command line arguments which don't follow that rule are ignored but not considered an invalid input.
 
-The command line interpreter is not case sensitive. That means the interpreter doesn't distinguish between upper case or lower case characters in a command line argument names.
+The command line interpreter is not case sensitive. That means the interpreter doesn't distinguish between upper case or lower case characters in a command name.
 
 Since all arguments are named arguments per definition, the order of the arguments on the command line is not important. Command line arguments may appear in any arbitrary order.
 
@@ -1059,7 +1060,7 @@ The command line interpreter renders the 'ValidationSummary' screen and the 'Usa
 
 The library supports the following data types:
 
-1) **Boolean**, which can have an assigned value of 'true | yes' or 'false | no'.
+1) **Boolean**, which can have an assigned value of 'true|yes' or 'false|no'.
 
 2) **Char**, which can have any single character assigned.
 
@@ -1099,7 +1100,7 @@ The short answer is, there is no standard. You might argue that there is at leas
 [POSIX](https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html#tag_12_02) convention and also a [GNU getopt](http://www.gnu.org/software/libc/manual/html_node/Getopt-Long-Options.html) convention. But that's where the problems begin. First of all, those standards are not compatible. Second, they are only used (if at all) on Unix / Linux systems. And third, they are remnants from an ancient computer history from before the late '70s.  
 Not everything invented in the '70s is bad. (Funk for example) When the CLI was invented, it was supposed to be used on terminals which very much looked like old mechanical typewriters. Most computers didn't have a screen at that time and the output was send to a plotter. There might have been good reasons to follow the previous mentioned conventions at that time, but I can't think of any reason why that conventions should be used till the end of time even if you know how to do better.
 
-So, what is wrong with these conventions?
+So, what is wrong with this conventions?
 
 Those conventions were invented at a time where all computer users where supposed to be experts in computer science. Computer only existed in universities, research center, and in some military installations. But today the picture is totally different. Computer are used everywhere. The number of available CLI programs also changed. A Unix system in the late '70s offered around 200 commands. Today even a basic installation offers easily 1000 commands.  
 How does that fit to the computer skills you can expect from an averaged user?  
@@ -1108,7 +1109,7 @@ Take a look at the chart created from a ***OECD Skills Research***.
 ![Computer skill levels by country](./CommandLineHelper/docs/images/computer-skill-levels-by-country.png "Computer skill levels by country")
 
 Here is the link to the whole article.  
-["The Distribution of Users’ Computer Skills: Worse Than You Think"](https://www.nngroup.com/articles/computer-skill-levels/)
+["The Distribution of Users' Computer Skills: Worse Than You Think"](https://www.nngroup.com/articles/computer-skill-levels/)
 
 **But wait, there is more!**
 
@@ -1188,12 +1189,12 @@ Enter the first two character of the ```grub``` command and hit the [TAB] key tw
 
 ![grub command](./CommandLineHelper/docs/images/grub-command.png "The grub command")
 
-After that you could go on typing and hit the [TAB] key again to narrow down the selection, or you keep on typing until there is only one possible selection left and hit the [TAB] key to complete the command. That is the fastest way to navigate through the myriads of commands on the command line with minimal typing effort. I entered only two characters on the command line and hit the [TAB] key to get a complete list of available ```grub``` commands. Now take a look at the ```dotnet``` command. You might guess that there should be a build or run command, but there is no way to get that information without calling the ```dotnet``` command with the help parameter set in the first place. Than you get the list of available sub-commands but you need to call the ```dotnet sub-command``` help a second time to learn about the sub-command parameter.
+After that you could go on typing and hit the [TAB] key again to narrow down the selection, or you keep on typing until there is only one possible selection left and hit the [TAB] key to complete the command. That is the fastest way to navigate through the myriads of commands on the command line with minimal typing effort. I entered only two characters on the command line and hit the [TAB] key to got a complete list of available ```grub``` commands. Now take a look at the ```dotnet``` command. You might guess that there should be a build or run command, but there is no way to get that information without calling the ```dotnet``` command with the help parameter set in the first place. Than you get the list of available sub-commands but you need to call the ```dotnet sub-command``` help a second time to learn about the sub-command parameter.
 
-Did you see what happened?
+Do you see what happened?
 
 By adding sub-commands to the ```dotnet``` command, the user is forced to switch to a different navigation, implemented by the command. The user also loses the command expansion. 
-That is annoying on the first hand and increases the rate of typos on the other hand. I can't see the benefit of that design pattern. I don't care if there are 2000 or 10000 commands available at the command line. As long as I only have to type 2 or 3 characters to narrow them down to the command I'm looking for. But thats not longer possible if you hide the commands from the command line and implement them as sub-commands. It would be easy to implement the ```dotnet``` sub-commands as normal commands. Their names would be 'dotnet-run', 'dotnet-build', 'dotnet-watch', ... and so on. The command names are longer, but as long as command expansion does the typing for me, I really don't care.
+That is annoying on the first hand and increases the rate of typos on the other hand. I can't see the benefit of that design pattern. I don't care if there are 2000 or 10000 commands available at the command line. As long as I only have to type 2 or 3 characters to narrow them down to the command I'm looking for. But thats not longer possible if you hide the commands from the command line and implement them as sub-commands. It would be easy to implement the ```dotnet``` sub-commands as normal commands. Their names would be 'dotnet-run', 'dotnet-build', 'dotnet-watch', ... and so on. The command names are longer, but as long as command expansion does the typing for me I really don't care.
 The command expansion is also the reason why abbreviated command names don't make any sense. Remember the imagined average computer user which tried to find the right command to copy a file. He couldn't find the command because the command is abbreviated to 'cp'.
 But if the command would have it's natural name 'copy', finding the right command would be easy. Since the user already knows what a copy command is and how to write it, the first two characters of 'copy' and some hits on the [TAB] key would have been sufficient to find the right command. But no luck with that. Give it a test and you get a result similar to this.
 
@@ -1219,7 +1220,11 @@ If you have come this far, you should have a good understanding why this command
 
 This project is licensed under the Microsoft Public License.
 
-See [(MS-PL)](https://opensource.org/licenses/MS-PL) for more information.
+See [(MS-PL)]([LICENSE](https://opensource.org/licenses/MS-PL)) for more information.
+
+## Release note
+
+Version 1.0.1: Fixed a bug in the string parser which let the parser fail when the value of a string parameter contained a '=' char.
 
 ## Glossary
 
@@ -1233,4 +1238,4 @@ See [(MS-PL)](https://opensource.org/licenses/MS-PL) for more information.
 |<a id="parameter-class"></a>parameter class | Per definition all classes which derive from [ParamterBase](./CommandLineHelper/docs/markdown/CommandLineHelper.ParameterBase.md)|
 |<a id="parameter-properties"></a>parameter properties | Per definition all public read / write properties of a parameter class.|
 |<a id="POWERSHELL"></A>Powershell | A microsoft command Line Interpreter available on windows and linux operation systems |
-|<a id="SHELL"></a>Shell | Command Line Interpreter on Unix / Linux operation systems. |
+|<a id="SHELL"></a>Shell | Command Line Interpreter on linux operation systems. |

@@ -73,6 +73,14 @@ namespace CommandLineHelper
       args = new string[] {"String=a b c d"};
       parameter.Parse(args);
       Assert.AreEqual(ParseResultEnum.PARSE_SUCCEEDED, parameter.PropertyMetaInfoList.Where(propInfo => propInfo.Name == "String").Single().ParseResult);
+
+      args = new string[] {"String=\"User Id=User;Password=P@ssword;POOLING=True;MIN POOL SIZE=1;MAX POOL SIZE=100;Incr Pool Size=5;DECR POOL SIZE=1;CONNECTION LIFETIME=60;VALIDATE CONNECTION=True;Data Source=ABCDEFG.RZ\""};
+      parameter.Parse(args);
+      Assert.AreEqual(ParseResultEnum.PARSE_SUCCEEDED, parameter.PropertyMetaInfoList.Where(propInfo => propInfo.Name == "String").Single().ParseResult);
+
+      args = new string[] {"String=\"Server=ABCDEFG,1435;Database=Test;Trusted_Connection=yes;\""};
+      parameter.Parse(args);
+      Assert.AreEqual(ParseResultEnum.PARSE_SUCCEEDED, parameter.PropertyMetaInfoList.Where(propInfo => propInfo.Name == "String").Single().ParseResult);
     }
 
     [TestMethod]

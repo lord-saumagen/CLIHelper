@@ -382,7 +382,7 @@ namespace CommandLineHelper
       //
       foreach (var arg in args)
       {
-        string[] splitArg = arg.Split('=');
+        string[] splitArg = arg.Split(new char[] {'='}, 2);
 
         if (splitArg.Length == 2)
         {
